@@ -30,6 +30,7 @@ $("#clear").click(function() {
 });
 
 // Save: saving the image
+// Something fishy going on here
 $("#save").click(function saveImage() {
 	var data = canvas.toDataURL();
 
