@@ -51,13 +51,13 @@
 	border: 2px solid white;
 	box-shadow: inset 0px 1px 2px rgba(0, 0, 0, 0.5);
 }
-#save{
+#clear, #save{
 	float: right;
 	margin-right: 20px;
 	height: 30px;
 	padding: 8px;
 	background-color: #434343;
 }
-#save:hover{
+#save:hover, #clear:hover{
 	background-color: #818181;
 }

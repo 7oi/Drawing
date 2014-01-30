@@ -14,7 +14,7 @@ function saveImage () {
 	}
 	request.open('POST', 'save.php', true);
 	request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-	request.send('img='+data);
+	request.send('img=' + data);
 
 	//window.open(data, '_blank', 'location=0, menubar=0');
 }
