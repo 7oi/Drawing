@@ -67,18 +67,45 @@ var Circle = Shape.extend({
 	},
 	rad: 0,
 	draw: function () {
-		// body...
+		context.arc(this.x, this.y, this.rad, 0, Math.PI * 2);
+		context.stroke();
+		context.closePath();
 	}
 });
 
 // Straight lines
 var Line = Shape.extend({
-	// TODO: Implement
+	constructor: function  (x, y, endX, endY) {
+		this.base(x, y);
+		this.endX = endX;
+		this.endY = endY;
+	},
+	endX: 0,
+	endY: 0,
+	draw: function  () {
+		context.beginPath();
+		context.lineTo(this.x, this.y);
+		context.lineTo(this.endX, this.endY);
+		context.stroke();
+		context.closePath();
+	}
 });
 
 // Freely drawn lines
 var FreeDraw = Shape.extend({
-
+	constructor: function  (x, y) {
+		this.base(x, y);
+		path[0] = new Point(x, y);
+	},
+	path: [],
+	draw: function () {
+		context.beginPath();
+		for (var i = 0, n = path.length; i < n; i++) {
+			context.lineTo(path[i].x, path[i].y);
+		};
+		context.stroke();
+		context.closePath();
+	}
 });
 
 // Text
