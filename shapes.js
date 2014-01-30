@@ -1,3 +1,4 @@
+// We think we made our point, right?
 var Point = Base.extend({
 	constructor: function(x, y) {
 		this.x = x;
@@ -7,17 +8,16 @@ var Point = Base.extend({
 	y: 0
 });
 
+// Base for all shapes
 var Shape = Base.extend({
-	constructor: function(x, y, color, lineW) {
+	constructor: function(x, y) {
 		this.x = x;
 		this.y = y;
-		this.color = color;
-		this.lineW = lineW;
 	},
 	x: 0,
 	y: 0,
-	color: "",
-	lineW: 1,
+	color: context.strokeStyle,
+	lineW: context.lineWidth,
 /*	path: [],
 	draw: function() {
 		for (var i = 0, n = path.length; i < n; i++) {
@@ -43,15 +43,15 @@ var Shape = Base.extend({
 });
 
 var Rect = Shape.extend({
-	constructor: function(x, y, w, h, color, lineW) {
-		this.base(x, y, color, lineW);
+	constructor: function(x, y, w, h) {
+		this.base(x, y);
 		this.w = w;
 		this.h = h;
 	},
-	w: 0,
-	h: 0,
+	w: 10,
+	h: 10,
 	draw: function() {
-		context.strokeRect(x, y, w, h);
+		context.strokeRect(this.x, this.y, this.w, this.h);
 	},
 	move: function(x, y) {
 
@@ -59,7 +59,14 @@ var Rect = Shape.extend({
 });
 
 var Circle = Shape.extend({
-	// TODO: Implement
+	constructor: function  (x, y, rad) {
+		this.base(x, y);
+		this.rad = rad;
+	},
+	rad: 0,
+	draw: function () {
+		// body...
+	}
 });
 
 var Line = Shape.extend({

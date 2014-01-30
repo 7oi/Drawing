@@ -1,6 +1,6 @@
-var colors = ['black', 'grey', 'white', 'red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'];
+//var colors = ['black', 'grey', 'white', 'red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'];
 
-for (var i = 0, n = colors.length; i < n; i++) {
+/*for (var i = 0, n = colors.length; i < n; i++) {
 	var swatch = document.createElement('div');
 	swatch.className = 'swatch';
 	swatch.style.backgroundColor = colors[i];
@@ -26,4 +26,4 @@ function setSwatch (e) {
 	swatch.className += ' active';
 }
 
-setSwatch({target: document.getElementsByClassName('swatch')[0]});
+setSwatch({target: document.getElementsByClassName('swatch')[0]});*/

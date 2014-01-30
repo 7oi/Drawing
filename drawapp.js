@@ -11,6 +11,9 @@ canvas.height = window.innerHeight;
 // ...and the stroke line
 context.lineWidth = radius * 2;
 
+// Better make an array for all the objects
+var drawn = [];
+
 // Takes care of hindering clearing of the canvas when resizing window
 window.onresize = function() {
 	var image = context.getImageData(0, 0, canvas.width, canvas.height);
@@ -43,6 +46,12 @@ $("#save").click(function saveImage() {
 	request.send('img='+ data);
 
 	//window.open(data, '_blank', 'location=0, menubar=0');
+});
+
+// Color: Picking a color
+$('#swatch').change(function  () {
+	context.strokeStyle = $('#swatch').val();
+	context.fillStyle = $('#swatch').val();
 });
 
 
