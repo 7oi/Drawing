@@ -42,6 +42,7 @@ var Shape = Base.extend({
 
 });
 
+// Rectangles
 var Rect = Shape.extend({
 	constructor: function(x, y, w, h) {
 		this.base(x, y);
@@ -58,6 +59,7 @@ var Rect = Shape.extend({
 	}
 });
 
+// Circles
 var Circle = Shape.extend({
 	constructor: function  (x, y, rad) {
 		this.base(x, y);
@@ -69,10 +71,17 @@ var Circle = Shape.extend({
 	}
 });
 
+// Straight lines
 var Line = Shape.extend({
 	// TODO: Implement
 });
 
+// Freely drawn lines
+var FreeDraw = Shape.extend({
+
+});
+
+// Text
 var Texts = Shape.extend({
 	// TODO: Implement
 });

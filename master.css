@@ -41,7 +41,7 @@
 	width: 30px;
 	height: 30px;
 	border-radius: 15px;
-	box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.5), 0px 2px 2pxrgba(0, 0, 0, 0.5);
+	/*box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.5), 0px 2px 2pxrgba(0, 0, 0, 0.5);*/
 	display: inline-block;
 	margin-left: 10px;
 	background-color: cyan;
@@ -56,6 +56,7 @@
 	margin-right: 20px;
 	height: 30px;
 	padding: 8px;
+	border-radius: 10px;
 	background-color: #434343;
 }
 #save:hover, #clear:hover{

@@ -3,8 +3,9 @@ var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
 
 // Some initialitation
-var radius = 10;
-var dragging = false;
+var radius = 10,
+	dragging = false
+	color = "black";
 // Setting the size of the canvas
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -14,19 +15,42 @@ context.lineWidth = radius * 2;
 // Better make an array for all the objects
 var drawn = [];
 
+// Keeps the settings
+function recall () {
+	context.lineWidth = radius * 2;
+	context.strokeStyle = color;
+	context.fillStyle = color;
+}
 // Takes care of hindering clearing of the canvas when resizing window
 window.onresize = function() {
 	var image = context.getImageData(0, 0, canvas.width, canvas.height);
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
 	context.putImageData(image, 0, 0);
-
+	recall();
 }
 
-// -------------- Buttons -----------------
+// -------------- Controls -----------------
+// Setting the radius function for the radius slider below
+var setRadius = function(newRadius) {
+	radius = newRadius;
+	context.lineWidth = radius * 2;
+	$('#radval').html(context.lineWidth);
+	$('#radctrl').val(radius);
+};
+// Now for the radius control
+$('#radctrl').mouseup(function() {
+	setRadius($('#radctrl').val());
+});
+$('#radval').mousemove(function() {
+	$('#radval').html($('#radctrl').val() * 2);
+});
+
+
 // Clear: A way to clear the canvas
 $("#clear").click(function() {
 	canvas.width = canvas.width;
+	recall();
 });
 
 // Save: saving the image
@@ -44,15 +68,16 @@ $("#save").click(function saveImage() {
 	}
 	request.open('POST', 'save.php', true);
 	request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-	request.send('img='+ data);
+	request.send('img=' + data);
 
 	//window.open(data, '_blank', 'location=0, menubar=0');
 });
 
 // Color: Picking a color
-$('#swatch').change(function  () {
+$('#swatch').change(function() {
 	context.strokeStyle = $('#swatch').val();
 	context.fillStyle = $('#swatch').val();
+	color = $('#swatch').val();
 });
 
 
@@ -85,3 +110,6 @@ $(canvas).mouseup(function() {
 
 // Also depends on modes
 $(canvas).mousemove(putPoint);
+
+// ------------------- Initializing values ----------------
+setRadius(radius);
