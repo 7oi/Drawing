@@ -24,10 +24,11 @@ var context = canvas.getContext('2d');
 
 var radius = 10,
 	dragging = false,
+	redoable = false,
 	color = "black",
 	mode = 0,
 	currShape = ''
-	shapeCount = 0;
+shapeCount = 0;
 
 // Setting the size of the canvas
 canvas.width = window.innerWidth;
@@ -36,7 +37,8 @@ canvas.height = window.innerHeight;
 context.lineWidth = radius * 2;
 
 // Better make an array for all the objects
-var drawn = [];
+var drawn = [],
+	undrawn = [];
 
 // Function to recall settings
 function recall() {
@@ -81,7 +83,7 @@ $('#swatch').change(function() {
 });
 
 // Change drawing mode
-$(".tool").click(function () {
+$(".tool").click(function() {
 	mode = $(this).val();
 });
 
@@ -90,6 +92,15 @@ $(".tool").click(function () {
 /* ---------------------------------------------------------------------------*/
 /*								CLEAR AND SAVE 								  */
 /* ---------------------------------------------------------------------------*/
+
+// A redraw function for the lot might come in handy
+function redrawAll() {
+	canvas.width = canvas.width;
+	recall();
+	for (var i = 0, m = drawn.length; i < m; i++) {
+		drawn[i].redraw();
+	};
+}
 
 // Clear: A way to clear the canvas
 $("#clear").click(function() {
@@ -117,30 +128,48 @@ $("#save").click(function saveImage() {
 	//window.open(data, '_blank', 'location=0, menubar=0');
 });
 
+$("#undo").click(function() {
+	if (drawn.length > 0) {
+		undrawn.push(drawn.pop());
+		redrawAll();
+		redoable = true;
+	} else {
+		console.log("Nothing to undo");
+	}
+});
+$("#redo").click(function() {
+	if (undrawn.length > 0) {
+		var temp = undrawn.pop()
+		temp.redraw();
+		drawn.push(temp);
+	} else {
+		console.log("Nothing to redo");
+	}
+
+});
 /* ---------------------------------------------------------------------------*/
 /*								 MOUSE ACTIONS								  */
 /* ---------------------------------------------------------------------------*/
 
 $(canvas).mousedown(function(e) {
 	dragging = true;
+	undrawn = [];
+	redoable = false;
 	// Following should depend on which mode is selected
-	if (mode == 0){
+	if (mode == 0) {
 		currShape = new FreeDraw(e.clientX, e.clientY);
 		context.closePath();
 		currShape.path.push([e.clientX, e.clientY]);
-	}
-	else if (mode == 1){
+	} else if (mode == 1) {
 		currShape = new Line(e.clientX, e.clientY, 300, 300);
-	}
-	else if (mode == 2){
+	} else if (mode == 2) {
 		currShape = new Rect(e.clientX, e.clientY, 50, 50);
-	}
-	else if (mode == 3){
+	} else if (mode == 3) {
 		currShape = new Circle(e.clientX, e.clientY, 100);
 	}
 	if (mode < 4)
 		context.beginPath();
-		currShape.draw(e.clientX, e.clientY);
+	currShape.draw(e.clientX, e.clientY);
 });
 
 $(canvas).mouseup(function() {
@@ -153,7 +182,7 @@ $(canvas).mouseup(function() {
 });
 
 // Also depends on modes
-$(canvas).mousemove(function (e) {
+$(canvas).mousemove(function(e) {
 	if (mode == 0 && dragging) {
 		currShape.draw(e.clientX, e.clientY);
 		currShape.path.push([e.clientX, e.clientY]);
