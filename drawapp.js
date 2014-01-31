@@ -104,8 +104,6 @@ function redrawAll() {
 
 
 function clearCanvas () {
-	drawn = [];
-	undrawn = [];
 	canvas.width = canvas.width;
 	recall();
 }
@@ -113,8 +111,11 @@ function clearCanvas () {
 // Clear: A way to clear the canvas
 $("#newCanvas").click(function() {
 	if (confirm("Are you sure?")) {
+		drawn = [];
+		undrawn = [];
 		clearCanvas();
 	}
+});
 
 $("#save").click(function saveImage() {
 
@@ -211,3 +212,4 @@ $(canvas).mousemove(function(e) {
 /* ---------------------------------------------------------------------------*/
 
 setRadius(radius);
+
