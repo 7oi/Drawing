@@ -102,6 +102,7 @@ function redrawAll() {
 	};
 }
 
+
 function clearCanvas () {
 	drawn = [];
 	undrawn = [];
@@ -114,27 +115,34 @@ $("#newCanvas").click(function() {
 	if (confirm("Are you sure?")) {
 		clearCanvas();
 	}
-});
 
-// Save: saving the image
-// Something fishy going on here
 $("#save").click(function saveImage() {
-	var data = canvas.toDataURL();
 
-	var request = new XMLHttpRequest();
+	var saves = [];
 
-	request.onreadystatechange = function() {
-		if (request.readyState == 4 && request.status == 200) {
-			var response = request.responseText;
-			window.open(response, '_blank', 'location=0, menubar=0');
-		}
+	if($.totalStorage('imgsaves')) {
+		saves = $.totalStorage('imgsaves');
 	}
-	request.open('POST', 'save.php', true);
-	request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-	request.send('img=' + data);
 
-	//window.open(data, '_blank', 'location=0, menubar=0');
-});
+	saves.push({'name':'myDrawing','uri':canvas.toDataURL()});
+
+	$.totalStorage('imgsaves',saves);
+		
+})
+
+var loadImage = function(imguri){
+	clearCanvas();
+	var img = new Image;
+	img.onload = function(){
+	  context.drawImage(img,0,0); // Or at whatever offset you like
+	};
+	img.src = imguri;
+}
+
+var clearCanvas = function(){
+	canvas.width = canvas.width;
+	recall();
+}
 
 $("#undo").click(function() {
 	if (drawn.length > 0) {
@@ -201,4 +209,5 @@ $(canvas).mousemove(function(e) {
 /* ---------------------------------------------------------------------------*/
 /*							   INITIALIZING VALUES	  						  */
 /* ---------------------------------------------------------------------------*/
+
 setRadius(radius);
