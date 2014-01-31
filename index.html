@@ -6,13 +6,17 @@
 </head>
 <body style="margin: 0;">
 	<div id="toolbar">
-		<div id="radius">
+		<div id="tools">
+			<button id="paint" class="tool" value="0">Paint</button>
+			<button id="line" class="tool" value="1">Line</button>
+			<button id="rect" class="tool" value="2">Rectangle</button>
+			<button id="circle" class="tool" value="3">Circle</button>
+			<button id="move" class="tool" value="4">Move</button>
+			<button id="resize" class="tool" value="5">Resize</button>
 			Line Width
 			<input id="radctrl" type="range" name="Radius" min="0.5" max="100">
 			<span id="radval"></span>
-		</div>
-		<div id="colors">
-			<input id="swatch" type="color" value="000000">
+			<input id="swatch" class="color" value="000000">
 		</div>
 		<div id="save">
 			Save

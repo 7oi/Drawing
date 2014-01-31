@@ -105,7 +105,18 @@ var FreeDraw = Shape.extend({
 		};
 		context.stroke();
 		context.closePath();
+	},
+	putPoint: function(e) {
+	if (dragging) {
+		context.lineTo(e.clientX, e.clientY);
+		context.stroke();
+		context.beginPath();
+		context.arc(e.clientX, e.clientY, radius, 0, Math.PI * 2);
+		context.fill();
+		context.beginPath();
+		context.moveTo(e.clientX, e.clientY);
 	}
+}
 });
 
 // Text

@@ -9,6 +9,7 @@
 	-ms-user-select: none;
 }
 
+
 #toolbar{
 	width: 100%;
 	height: 50px;
@@ -25,27 +26,23 @@
 	background-color: #4f4f4f;
 	display: inline-block;
 	text-align: center;
-	padding: 5px;
+	padding: 3px;
 }
-.radval{
-	width: 50px;
-	display: block;
+#radval{
+	width: 30px;
+	display: inline-block;
 }
-#colors{
-	float: right;
-}
-#radius{
-	float: left;
-}
-.swatch{
+#swatch{
+	font-size: 0.4em;
 	width: 30px;
 	height: 30px;
 	border-radius: 15px;
-	/*box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.5), 0px 2px 2pxrgba(0, 0, 0, 0.5);*/
+	box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.5), 0px 2px 2pxrgba(0, 0, 0, 0.5);
 	display: inline-block;
 	margin-left: 10px;
 	background-color: cyan;
 }
+
 
 .swatch.active{
 	border: 2px solid white;
@@ -56,6 +53,14 @@
 	margin-right: 20px;
 	height: 30px;
 	padding: 8px;
+	border-radius: 10px;
+	background-color: #434343;
+}
+#tools{
+	float: left;
+	margin-left: 20px;
+	height: 30px;
+	padding: 3px;
 	border-radius: 10px;
 	background-color: #434343;
 }

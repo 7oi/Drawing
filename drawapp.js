@@ -16,6 +16,7 @@ context.lineWidth = radius * 2;
 var drawn = [];
 
 // Keeps the settings
+// context.restore() and .save() instead?!?
 function recall () {
 	context.lineWidth = radius * 2;
 	context.strokeStyle = color;
@@ -46,6 +47,13 @@ $('#radval').mousemove(function() {
 	$('#radval').html($('#radctrl').val() * 2);
 });
 
+// Color: Picking a color
+$('#swatch').change(function() {
+	color = $('#swatch').val();
+	context.strokeStyle = color;
+	context.fillStyle = color;
+	$('#swatch').css("background-color", color);
+});
 
 // Clear: A way to clear the canvas
 $("#clear").click(function() {
@@ -71,13 +79,6 @@ $("#save").click(function saveImage() {
 	request.send('img=' + data);
 
 	//window.open(data, '_blank', 'location=0, menubar=0');
-});
-
-// Color: Picking a color
-$('#swatch').change(function() {
-	context.strokeStyle = $('#swatch').val();
-	context.fillStyle = $('#swatch').val();
-	color = $('#swatch').val();
 });
 
 
@@ -113,3 +114,4 @@ $(canvas).mousemove(putPoint);
 
 // ------------------- Initializing values ----------------
 setRadius(radius);
+$('#swatch').css("background-color", color);
