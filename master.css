@@ -48,7 +48,7 @@
 	border: 2px solid white;
 	box-shadow: inset 0px 1px 2px rgba(0, 0, 0, 0.5);
 }
-#clear, #save, #undo, #redo{
+#newCanvas, #save, #undo, #redo{
 	float: right;
 	margin-right: 20px;
 	height: 30px;
@@ -64,6 +64,6 @@
 	border-radius: 10px;
 	background-color: #434343;
 }
-#save:hover, #clear:hover, #undo:hover, #redo:hover{
+#save:hover, #newCanvas:hover, #undo:hover, #redo:hover{
 	background-color: #818181;
 }

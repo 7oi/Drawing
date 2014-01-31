@@ -67,11 +67,11 @@ var setRadius = function(newRadius) {
 	$('#radctrl').val(radius);
 };
 // Now for the radius control
-$('#radctrl').mouseup(function() {
+$('#radctrl').mousemove(function() {
 	setRadius($('#radctrl').val());
 });
 $('#radval').mousemove(function() {
-	$('#radval').html($('#radctrl').val() * 2);
+	$('#radval').html(context.lineWidth);
 });
 
 // Color: Picking a color
@@ -102,10 +102,18 @@ function redrawAll() {
 	};
 }
 
-// Clear: A way to clear the canvas
-$("#clear").click(function() {
+function clearCanvas () {
+	drawn = [];
+	undrawn = [];
 	canvas.width = canvas.width;
 	recall();
+}
+
+// Clear: A way to clear the canvas
+$("#newCanvas").click(function() {
+	if (confirm("Are you sure?")) {
+		clearCanvas();
+	}
 });
 
 // Save: saving the image
@@ -155,6 +163,7 @@ $(canvas).mousedown(function(e) {
 	dragging = true;
 	undrawn = [];
 	redoable = false;
+	cleared = false;
 	// Following should depend on which mode is selected
 	if (mode == 0) {
 		currShape = new FreeDraw(e.clientX, e.clientY);
@@ -193,4 +202,3 @@ $(canvas).mousemove(function(e) {
 /*							   INITIALIZING VALUES	  						  */
 /* ---------------------------------------------------------------------------*/
 setRadius(radius);
-$('#swatch').css("background-color", color);

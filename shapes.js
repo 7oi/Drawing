@@ -45,7 +45,7 @@ var Shape = Base.extend({
 		recall();
 	},
 	special: function () {
-		var nothing = 0;
+		// Does nothing for the base class
 	}
 });
 
@@ -64,8 +64,8 @@ var Rect = Shape.extend({
 	draw: function() {
 		context.strokeRect(this.x, this.y, this.w, this.h);
 	},
-	move: function(x, y) {
-
+	special: function () {
+		this.draw();
 	}
 });
 
