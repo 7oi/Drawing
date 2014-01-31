@@ -1,11 +1,34 @@
+/* ---------------------------------------------------------------------------*/
+/*				   __			 __			   __			 __				  *
+ *			      /  /\         /  /\         /  /\         /  /\    		  *
+ *			     /  /::\       /  /::\       /  /::\       /  /:/   		  *
+ *			    /  /:/\:\     /  /:/\:\     /  /:/\:\     /  /:/_   		  *
+ *			   /  /:/  \:\   /  /::\ \:\   /  /::\ \:\   /  /:/ /\ _ 		  *
+ *			  /__/:/ \__\:| /__/:/\:\_\:\ /__/:/\:\_\:\ |  |:| /:/ /\		  *
+ *			  \  \:\ /  /:/ \__\/~|::\/:/ \__\/  \:\/:/ |  |:|/:/ /:/		  *
+ *			   \  \:\  /:/     |  |:|::/       \__\::/   \  \::/_/:/ 		  *
+ *			    \  \:\/:/      |  |:|\/        /  /:/     \  \::::/  		  *
+ *			     \__\::/       |__|:|~        /__/:/       \__\::/   		  *
+ *			         ~~         \__\|         \__\/             		  	  *
+ *																			  *
+ *     				     - a silly HTML5 app for drawing -			  		  *
+/* ---------------------------------------------------------------------------*/
+
+/* ---------------------------------------------------------------------------*/
+/*								     INIT   								  */
+/* ---------------------------------------------------------------------------*/
+
 // Rather than calling these constantly, lets just save them
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
 
-// Some initialitation
 var radius = 10,
-	dragging = false
-	color = "black";
+	dragging = false,
+	color = "black",
+	mode = 0,
+	currShape = ''
+	shapeCount = 0;
+
 // Setting the size of the canvas
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -15,13 +38,13 @@ context.lineWidth = radius * 2;
 // Better make an array for all the objects
 var drawn = [];
 
-// Keeps the settings
-// context.restore() and .save() instead?!?
-function recall () {
+// Function to recall settings
+function recall() {
 	context.lineWidth = radius * 2;
 	context.strokeStyle = color;
 	context.fillStyle = color;
 }
+
 // Takes care of hindering clearing of the canvas when resizing window
 window.onresize = function() {
 	var image = context.getImageData(0, 0, canvas.width, canvas.height);
@@ -31,7 +54,9 @@ window.onresize = function() {
 	recall();
 }
 
-// -------------- Controls -----------------
+/* ---------------------------------------------------------------------------*/
+/*								     TOOLBAR 								  */
+/* ---------------------------------------------------------------------------*/
 // Setting the radius function for the radius slider below
 var setRadius = function(newRadius) {
 	radius = newRadius;
@@ -54,6 +79,17 @@ $('#swatch').change(function() {
 	context.fillStyle = color;
 	$('#swatch').css("background-color", color);
 });
+
+// Change drawing mode
+$(".tool").click(function () {
+	mode = $(this).val();
+});
+
+
+
+/* ---------------------------------------------------------------------------*/
+/*								CLEAR AND SAVE 								  */
+/* ---------------------------------------------------------------------------*/
 
 // Clear: A way to clear the canvas
 $("#clear").click(function() {
@@ -81,37 +117,51 @@ $("#save").click(function saveImage() {
 	//window.open(data, '_blank', 'location=0, menubar=0');
 });
 
-
-// Should be a function within freedraw shape
-var putPoint = function(e) {
-	if (dragging) {
-		context.lineTo(e.clientX, e.clientY);
-		context.stroke();
-		context.beginPath();
-		context.arc(e.clientX, e.clientY, radius, 0, Math.PI * 2);
-		context.fill();
-		context.beginPath();
-		context.moveTo(e.clientX, e.clientY);
-	}
-}
-
-// ------------------ Mouse --------------------
+/* ---------------------------------------------------------------------------*/
+/*								 MOUSE ACTIONS								  */
+/* ---------------------------------------------------------------------------*/
 
 $(canvas).mousedown(function(e) {
 	dragging = true;
 	// Following should depend on which mode is selected
-	putPoint(e);
+	if (mode == 0){
+		currShape = new FreeDraw(e.clientX, e.clientY);
+		context.closePath();
+		currShape.path.push([e.clientX, e.clientY]);
+	}
+	else if (mode == 1){
+		currShape = new Line(e.clientX, e.clientY, 300, 300);
+	}
+	else if (mode == 2){
+		currShape = new Rect(e.clientX, e.clientY, 50, 50);
+	}
+	else if (mode == 3){
+		currShape = new Circle(e.clientX, e.clientY, 100);
+	}
+	if (mode < 4)
+		context.beginPath();
+		currShape.draw(e.clientX, e.clientY);
 });
 
 $(canvas).mouseup(function() {
 	dragging = false;
 	// Again, depends on modes
 	context.beginPath();
+	if (mode < 4)
+		drawn.push(currShape);
+	currShape = null;
 });
 
 // Also depends on modes
-$(canvas).mousemove(putPoint);
+$(canvas).mousemove(function (e) {
+	if (mode == 0 && dragging) {
+		currShape.draw(e.clientX, e.clientY);
+		currShape.path.push([e.clientX, e.clientY]);
+	}
+});
 
-// ------------------- Initializing values ----------------
+/* ---------------------------------------------------------------------------*/
+/*							   INITIALIZING VALUES	  						  */
+/* ---------------------------------------------------------------------------*/
 setRadius(radius);
 $('#swatch').css("background-color", color);

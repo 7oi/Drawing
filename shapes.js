@@ -1,48 +1,58 @@
-// We think we made our point, right?
-var Point = Base.extend({
-	constructor: function(x, y) {
-		this.x = x;
-		this.y = y;
-	},
-	x: 0,
-	y: 0
-});
+/*--------------------------------------------------------------------------------------*/
+/*      ___           ___           ___           ___           ___           ___ 		*
+ *     /\  \         /\__\         /\  \         /\  \         /\  \         /\  \    	*
+ *    /::\  \       /:/  /        /::\  \       /::\  \       /::\  \       /::\  \   	*
+ *   /:/\ \  \     /:/__/        /:/\:\  \     /:/\:\  \     /:/\:\  \     /:/\ \  \  	*
+ *  _\:\~\ \  \   /::\  \ ___   /::\~\:\  \   /::\~\:\  \   /::\~\:\  \   _\:\~\ \  \ 	*
+ * /\ \:\ \ \__\ /:/\:\  /\__\ /:/\:\ \:\__\ /:/\:\ \:\__\ /:/\:\ \:\__\ /\ \:\ \ \__\	*
+ * \:\ \:\ \/__/ \/__\:\/:/  / \/__\:\/:/  / \/__\:\/:/  / \:\~\:\ \/__/ \:\ \:\ \/__/	*
+ *  \:\ \:\__\        \::/  /       \::/  /       \::/  /   \:\ \:\__\    \:\ \:\__\  	*
+ *   \:\/:/  /        /:/  /        /:/  /         \/__/     \:\ \/__/     \:\/:/  /  	*
+ *    \::/  /        /:/  /        /:/  /                     \:\__\        \::/  /   	*
+ *     \/__/         \/__/         \/__/                       \/__/         \/__/    	*
+ *																						*
+ *						- Classes for all them shapley objects -						*
+/*--------------------------------------------------------------------------------------*/
 
-// Base for all shapes
+
+/* ---------------------------------------------------------------------------*/
+/*							    THE SHAPE OBJECT  							  */
+/*								- mother of all 							  */
+/* ---------------------------------------------------------------------------*/
 var Shape = Base.extend({
 	constructor: function(x, y) {
 		this.x = x;
 		this.y = y;
+		this.n = shapeCount;
+		shapeCount++;
+		this.color = context.strokeStyle;
+		this.lineW = context.lineWidth;
 	},
 	x: 0,
 	y: 0,
-	color: context.strokeStyle,
-	lineW: context.lineWidth,
-/*	path: [],
-	draw: function() {
-		for (var i = 0, n = path.length; i < n; i++) {
-
-		};
-	},*/
-	move: function(x, y) {
-		/*
-		// Find offset
-		val movX = x - this.x,
-			movY = y - this.y;
-		// Move all points
-		for (var i = 0, n = path.length; i < n; i++) {
-			path[i].x += movX;
-			path[i].y += movY;
-		};*/
-
-		// Reset shape's x and y
-		this.x = x;
-		this.y = y;
+	n: 0,
+	color: "",
+	lineW: 0,
+	redraw: function() {
+		context.closePath();
+		context.lineWidth = this.lineW;
+		context.strokeStyle = this.color;
+		context.fillStyle = this.color;
+		dragging = true;
+		this.special();
+		context.beginPath();
+		dragging = false;
+		recall();
+	},
+	special: function () {
+		var nothing = 0;
 	}
-
 });
 
-// Rectangles
+/* ---------------------------------------------------------------------------*/
+/*							    THE RECT OBJECT  							  */
+/*						  - the square in the family 						  */
+/* ---------------------------------------------------------------------------*/
 var Rect = Shape.extend({
 	constructor: function(x, y, w, h) {
 		this.base(x, y);
@@ -59,67 +69,84 @@ var Rect = Shape.extend({
 	}
 });
 
-// Circles
+/* ---------------------------------------------------------------------------*/
+/*							    THE CIRCLE OBJECT  							  */
+/*							 - all round all around 						  */
+/* ---------------------------------------------------------------------------*/
 var Circle = Shape.extend({
-	constructor: function  (x, y, rad) {
+	constructor: function(x, y, rad) {
 		this.base(x, y);
 		this.rad = rad;
 	},
 	rad: 0,
-	draw: function () {
+	draw: function() {
 		context.arc(this.x, this.y, this.rad, 0, Math.PI * 2);
 		context.stroke();
 		context.closePath();
+	},
+	special: function () {
+		this.draw();
 	}
 });
 
-// Straight lines
+/* ---------------------------------------------------------------------------*/
+/*							    THE LINE OBJECT  							  */
+/*								- gone straight 							  */
+/* ---------------------------------------------------------------------------*/
 var Line = Shape.extend({
-	constructor: function  (x, y, endX, endY) {
+	constructor: function(x, y, endX, endY) {
 		this.base(x, y);
 		this.endX = endX;
 		this.endY = endY;
 	},
 	endX: 0,
 	endY: 0,
-	draw: function  () {
+	draw: function() {
 		context.beginPath();
 		context.lineTo(this.x, this.y);
 		context.lineTo(this.endX, this.endY);
 		context.stroke();
 		context.closePath();
+	},
+	special: function  () {
+		this.draw();
 	}
 });
 
-// Freely drawn lines
+/* ---------------------------------------------------------------------------*/
+/*							  THE FREEDRAW OBJECT  							  */
+/*							 - the carefree hippie							  */
+/* ---------------------------------------------------------------------------*/
 var FreeDraw = Shape.extend({
-	constructor: function  (x, y) {
+	constructor: function(x, y) {
 		this.base(x, y);
-		path[0] = new Point(x, y);
+		path = new Array();
+		this.draw(x, y);
 	},
 	path: [],
-	draw: function () {
-		context.beginPath();
-		for (var i = 0, n = path.length; i < n; i++) {
-			context.lineTo(path[i].x, path[i].y);
-		};
-		context.stroke();
-		context.closePath();
+	draw: function(x, y) {
+		if (dragging) {
+			context.lineTo(x, y);
+			context.stroke();
+			context.beginPath();
+			context.arc(x, y, radius, 0, Math.PI * 2);
+			context.fill();
+			context.beginPath();
+			context.moveTo(x, y);
+		}
 	},
-	putPoint: function(e) {
-	if (dragging) {
-		context.lineTo(e.clientX, e.clientY);
-		context.stroke();
-		context.beginPath();
-		context.arc(e.clientX, e.clientY, radius, 0, Math.PI * 2);
-		context.fill();
-		context.beginPath();
-		context.moveTo(e.clientX, e.clientY);
+	special: function() {
+		for(var i = 0, m = this.path.length; i < m; i++) {
+			context.lineTo(this.path[i][0], this.path[i][1]);
+			context.stroke();
+		}
 	}
-}
 });
 
-// Text
+/* ---------------------------------------------------------------------------*/
+/*							    THE TEXT OBJECT  							  */
+/*								  - the nerd 								  */
+/* ---------------------------------------------------------------------------*/
 var Texts = Shape.extend({
 	// TODO: Implement
 });
