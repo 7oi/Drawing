@@ -18,6 +18,7 @@
 	top: 0;
 	background-color: #2f2f2f;
 	color: white;
+	z-index: 3;
 }
 
 .radctrl{
@@ -42,7 +43,15 @@
 	margin-left: 10px;
 	background-color: cyan;
 }
-
+#ghost{
+	position: absolute;
+  	background: transparent;
+  	z-index: 2;
+}
+#canvas{
+	position: absolute;
+  	z-index: 1;
+}
 
 .swatch.active{
 	border: 2px solid white;

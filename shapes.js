@@ -19,6 +19,8 @@
 /*							    THE SHAPE OBJECT  							  */
 /*								- mother of all 							  */
 /* ---------------------------------------------------------------------------*/
+
+
 var Shape = Base.extend({
 	constructor: function(x, y) {
 		this.x = x;
@@ -34,17 +36,15 @@ var Shape = Base.extend({
 	color: "",
 	lineW: 0,
 	redraw: function() {
-		context.closePath();
+		context.beginPath();
 		context.lineWidth = this.lineW;
 		context.strokeStyle = this.color;
 		context.fillStyle = this.color;
-		dragging = true;
 		this.special();
 		context.beginPath();
-		dragging = false;
 		recall();
 	},
-	special: function () {
+	special: function() {
 		// Does nothing for the base class
 	}
 });
@@ -61,11 +61,14 @@ var Rect = Shape.extend({
 	},
 	w: 10,
 	h: 10,
-	draw: function() {
-		context.strokeRect(this.x, this.y, this.w, this.h);
+	draw: function(ctx, mouseX, mouseY) {
+		ctx.clearRect(0, 0, ghost.width, ghost.height);
+		this.w = mouseX - this.x;
+		this.h = mouseY - this.y;
+		ctx.strokeRect(this.x, this.y, this.w, this.h);
 	},
-	special: function () {
-		this.draw();
+	special: function() {
+		context.strokeRect(this.x, this.y, this.w, this.h);
 	}
 });
 
@@ -79,13 +82,15 @@ var Circle = Shape.extend({
 		this.rad = rad;
 	},
 	rad: 0,
-	draw: function() {
-		context.arc(this.x, this.y, this.rad, 0, Math.PI * 2);
-		context.stroke();
-		context.closePath();
+	draw: function(ctx, mouseX, mouseY) {
+		ctx.clearRect(0, 0, ghost.width, ghost.height);
+		this.rad = Math.sqrt(Math.pow(this.x - mouseX, 2) + Math.pow(this.y - mouseY, 2));
+		ctx.arc(this.x, this.y, this.rad, 0, Math.PI * 2);
+		ctx.closePath();
+		ctx.stroke();
 	},
-	special: function () {
-		this.draw();
+	special: function() {
+		this.draw(context);
 	}
 });
 
@@ -101,15 +106,18 @@ var Line = Shape.extend({
 	},
 	endX: 0,
 	endY: 0,
-	draw: function() {
-		context.beginPath();
-		context.lineTo(this.x, this.y);
-		context.lineTo(this.endX, this.endY);
-		context.stroke();
-		context.closePath();
+	draw: function(ctx, mouseX, mouseY) {
+		this.endX = mouseX;
+		this.endY = mouseY;
+		ctx.clearRect(0, 0, ghost.width, ghost.height);
+		ctx.beginPath();
+		ctx.lineTo(this.x, this.y);
+		ctx.lineTo(this.endX, this.endY);
+		ctx.stroke();
+		ctx.closePath();
 	},
-	special: function  () {
-		this.draw();
+	special: function() {
+		this.draw(context);
 	}
 });
 
@@ -121,25 +129,21 @@ var FreeDraw = Shape.extend({
 	constructor: function(x, y) {
 		this.base(x, y);
 		path = new Array();
-		this.draw(x, y);
 	},
 	path: [],
-	draw: function(x, y) {
-		if (dragging) {
-			context.lineTo(x, y);
-			context.stroke();
-			context.beginPath();
-			context.arc(x, y, radius, 0, Math.PI * 2);
-			context.fill();
-			context.beginPath();
-			context.moveTo(x, y);
-		}
+	draw: function(ctx, x, y) {
+		ctx.lineTo(x, y);
+		ctx.stroke();
+		ctx.arc(x, y, radius, 0, Math.PI * 2);
+		ctx.beginPath();
+		ctx.moveTo(x, y);
+		ctx.fill();
 	},
 	special: function() {
-		for(var i = 0, m = this.path.length; i < m; i++) {
-			context.lineTo(this.path[i][0], this.path[i][1]);
-			context.stroke();
+		for (var i = 0, m = this.path.length; i < m; i++) {
+			this.draw(context, this.path[i][0], this.path[i][1]);
 		}
+		
 	}
 });
 

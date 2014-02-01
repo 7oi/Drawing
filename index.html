@@ -5,6 +5,13 @@
 	<link rel="stylesheet" type="text/css" href="master.css">
 </head>
 <body style="margin: 0;">
+	<canvas id="ghost" style="display: block">
+	</canvas>
+	<canvas id="canvas" style="display: block">
+		What a silly browser you have. No drawing until you upgrade!
+	</canvas>
+	
+	
 	<div id="toolbar">
 		<div id="tools">
 			<button id="paint" class="tool" value="0">Paint</button>
@@ -31,9 +38,6 @@
 			Redo
 		</div>
 	</div>
-	<canvas id="canvas" style="display: block">
-		What a silly browser you have. No drawing until you upgrade!
-	</canvas>
 	<script type="text/javascript" src="http://dean.edwards.name/base/Base.js"></script>
 	<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
 	<script type="text/javascript" src="jquery.total-storage.js"></script>

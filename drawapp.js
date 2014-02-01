@@ -19,23 +19,27 @@
 /* ---------------------------------------------------------------------------*/
 
 // Rather than calling these constantly, lets just save them
-var canvas = document.getElementById('canvas');
-var context = canvas.getContext('2d');
+var canvas = document.getElementById('canvas'),
+	context = canvas.getContext('2d'),
+	ghost = document.getElementById('ghost'),
+	gcontext = canvas.getContext('2d');
 
-var radius = 10,
+var radius = 1,
 	dragging = false,
 	redoable = false,
 	color = "black",
 	mode = 0,
-	currShape = ''
-shapeCount = 0;
+	currShape = '',
+	shapeCount = 0;
 
 // Setting the size of the canvas
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
+ghost.width = window.innerWidth;
+ghost.height = window.innerHeight;
 // ...and the stroke line
 context.lineWidth = radius * 2;
-
+gcontext.lineWidth = context.lineWidth;
 // Better make an array for all the objects
 var drawn = [],
 	undrawn = [];
@@ -45,10 +49,14 @@ function recall() {
 	context.lineWidth = radius * 2;
 	context.strokeStyle = color;
 	context.fillStyle = color;
+	gcontext.lineWidth = radius * 2;
+	gcontext.strokeStyle = color;
+	gcontext.fillStyle = color;
 }
 
 // Takes care of hindering clearing of the canvas when resizing window
 window.onresize = function() {
+	//redrawAll();
 	var image = context.getImageData(0, 0, canvas.width, canvas.height);
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
@@ -63,6 +71,7 @@ window.onresize = function() {
 var setRadius = function(newRadius) {
 	radius = newRadius;
 	context.lineWidth = radius * 2;
+	gcontext.lineWidth = context.lineWidth;
 	$('#radval').html(context.lineWidth);
 	$('#radctrl').val(radius);
 };
@@ -79,6 +88,8 @@ $('#swatch').change(function() {
 	color = $('#swatch').val();
 	context.strokeStyle = color;
 	context.fillStyle = color;
+	gcontext.strokeStyle = color;
+	gcontext.fillStyle = color;
 	$('#swatch').css("background-color", color);
 });
 
@@ -133,7 +144,7 @@ $("#save").click(function saveImage() {
 
 var loadImage = function(imguri){
 	clearCanvas();
-	var img = new Image;
+	var img = new Image();
 	img.onload = function(){
 	  context.drawImage(img,0,0); // Or at whatever offset you like
 	};
@@ -168,42 +179,45 @@ $("#redo").click(function() {
 /*								 MOUSE ACTIONS								  */
 /* ---------------------------------------------------------------------------*/
 
-$(canvas).mousedown(function(e) {
+$(ghost).mousedown(function(e) {
 	dragging = true;
 	undrawn = [];
 	redoable = false;
-	cleared = false;
 	// Following should depend on which mode is selected
 	if (mode == 0) {
 		currShape = new FreeDraw(e.clientX, e.clientY);
-		context.closePath();
-		currShape.path.push([e.clientX, e.clientY]);
+		currShape.draw(gcontext, e.clientX, e.clientY);
 	} else if (mode == 1) {
-		currShape = new Line(e.clientX, e.clientY, 300, 300);
+		currShape = new Line(e.clientX, e.clientY, e.clientX, e.clientY);
 	} else if (mode == 2) {
-		currShape = new Rect(e.clientX, e.clientY, 50, 50);
+		currShape = new Rect(e.clientX, e.clientY, 0, 0);
 	} else if (mode == 3) {
 		currShape = new Circle(e.clientX, e.clientY, 100);
 	}
-	if (mode < 4)
-		context.beginPath();
-	currShape.draw(e.clientX, e.clientY);
+		
 });
 
-$(canvas).mouseup(function() {
+$(ghost).mouseup(function() {
 	dragging = false;
 	// Again, depends on modes
 	context.beginPath();
-	if (mode < 4)
+	if (mode < 4){
 		drawn.push(currShape);
-	currShape = null;
+		gcontext.clearRect(0, 0, ghost.width, ghost.height);
+		redrawAll();
+		currShape = null;
+	}
+	
 });
 
 // Also depends on modes
-$(canvas).mousemove(function(e) {
-	if (mode == 0 && dragging) {
-		currShape.draw(e.clientX, e.clientY);
-		currShape.path.push([e.clientX, e.clientY]);
+$(ghost).mousemove(function(e) {
+	if (mode < 4 && dragging) {
+		currShape.draw(gcontext, e.clientX, e.clientY);
+		if(mode == 0) {
+			currShape.path.push([e.clientX, e.clientY]);
+		}
+	} else if (false) {
 	}
 });
 
