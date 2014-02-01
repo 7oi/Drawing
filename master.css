@@ -28,6 +28,7 @@
 	display: inline-block;
 	text-align: center;
 	padding: 3px;
+	-webkit-transform: rotate(90deg);
 }
 #radval{
 	width: 30px;

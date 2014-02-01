@@ -22,7 +22,7 @@
 var canvas = document.getElementById('canvas'),
 	context = canvas.getContext('2d'),
 	ghost = document.getElementById('ghost'),
-	gcontext = ghost2.getContext('2d');
+	gcontext = ghost.getContext('2d');
 
 var radius = 1,
 	dragging = false,
@@ -195,7 +195,7 @@ $(ghost).mousedown(function(e) {
 	// Following should depend on which mode is selected
 	if (mode == 0) {
 		currShape = new FreeDraw(e.clientX, e.clientY);
-		currShape.draw(gcontext, e.clientX, e.clientY);
+		gcontext.beginPath();
 	} else if (mode == 1) {
 		currShape = new Line(e.clientX, e.clientY, e.clientX, e.clientY);
 	} else if (mode == 2) {
@@ -211,9 +211,10 @@ $(ghost).mouseup(function() {
 	// Again, depends on modes
 	//context.beginPath();
 	if (mode < 4) {
+		gcontext.closePath();
 		drawn.push(currShape);
+		currShape.redraw();
 		gcontext.clearRect(0, 0, ghost.width, ghost.height);
-		redrawAll();
 		currShape = null;
 	}
 

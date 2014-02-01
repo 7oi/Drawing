@@ -114,9 +114,7 @@ var Line = Shape.extend({
 		}
 		ctx.clearRect(0, 0, ghost.width, ghost.height);
 		ctx.beginPath();
-		//ctx.moveTo(this.x, this.y);
 		ctx.lineTo(this.x, this.y);
-		//ctx.moveTo(this.endX, this.endY);
 		ctx.lineTo(this.endX, this.endY);
 		ctx.stroke();
 		ctx.closePath();
@@ -141,17 +139,25 @@ var FreeDraw = Shape.extend({
 	},
 	path: [],
 	draw: function(ctx, x, y) {
+		//ctx.beginPath();
 		ctx.lineTo(x, y);
-		ctx.stroke();
-		ctx.arc(x, y, radius, 0, Math.PI * 2);
-		ctx.beginPath();
 		ctx.moveTo(x, y);
-		ctx.fill();
+		ctx.stroke();
+		//ctx.closePath();
+		//ctx.arc(x, y, radius, 0, Math.PI * 2);
+		//ctx.beginPath();
+		//ctx.moveTo(x, y);
+		//ctx.fill();
+		//1ctx.closePath();
 	},
 	special: function() {
+		context.beginPath();
 		for (var i = 0, m = this.path.length; i < m; i++) {
-			this.draw(context, this.path[i][0], this.path[i][1]);
+			context.lineTo(this.path[i][0], this.path[i][1]);
+			context.moveTo(this.path[i][0], this.path[i][1]);
 		}
+		context.stroke();
+		context.closePath();
 
 	}
 });
@@ -161,5 +167,5 @@ var FreeDraw = Shape.extend({
 /*								  - the nerd 								  */
 /* ---------------------------------------------------------------------------*/
 var Texts = Shape.extend({
-	// TODO: Implement
+	
 });
