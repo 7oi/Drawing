@@ -22,7 +22,7 @@
 var canvas = document.getElementById('canvas'),
 	context = canvas.getContext('2d'),
 	ghost = document.getElementById('ghost'),
-	gcontext = canvas.getContext('2d');
+	gcontext = ghost2.getContext('2d');
 
 var radius = 1,
 	dragging = false,
@@ -114,7 +114,7 @@ function redrawAll() {
 }
 
 
-function clearCanvas () {
+function clearCanvas() {
 	canvas.width = canvas.width;
 	recall();
 }
@@ -132,26 +132,29 @@ $("#save").click(function saveImage() {
 
 	var saves = [];
 
-	if($.totalStorage('imgsaves')) {
+	if ($.totalStorage('imgsaves')) {
 		saves = $.totalStorage('imgsaves');
 	}
 
-	saves.push({'name':'myDrawing','uri':canvas.toDataURL()});
+	saves.push({
+		'name': 'myDrawing',
+		'uri': canvas.toDataURL()
+	});
 
-	$.totalStorage('imgsaves',saves);
-		
+	$.totalStorage('imgsaves', saves);
+
 })
 
-var loadImage = function(imguri){
+var loadImage = function(imguri) {
 	clearCanvas();
 	var img = new Image();
-	img.onload = function(){
-	  context.drawImage(img,0,0); // Or at whatever offset you like
+	img.onload = function() {
+		context.drawImage(img, 0, 0); // Or at whatever offset you like
 	};
 	img.src = imguri;
 }
 
-var clearCanvas = function(){
+var clearCanvas = function() {
 	canvas.width = canvas.width;
 	recall();
 }
@@ -162,7 +165,10 @@ $("#undo").click(function() {
 		redrawAll();
 		redoable = true;
 	} else {
-		console.log("Nothing to undo");
+		$('#msg').text("Nothing to undo").fadeIn();
+		setTimeout(function() {
+			$('#msg').fadeOut(1000);
+		}, 2000);		
 	}
 });
 $("#redo").click(function() {
@@ -171,7 +177,10 @@ $("#redo").click(function() {
 		temp.redraw();
 		drawn.push(temp);
 	} else {
-		console.log("Nothing to redo");
+		$('#msg').text("Nothing to redo").fadeIn(1000);
+		setTimeout(function() {
+			$('#msg').fadeOut(1000);
+		}, 2000);
 	}
 
 });
@@ -192,33 +201,32 @@ $(ghost).mousedown(function(e) {
 	} else if (mode == 2) {
 		currShape = new Rect(e.clientX, e.clientY, 0, 0);
 	} else if (mode == 3) {
-		currShape = new Circle(e.clientX, e.clientY, 10);
+		currShape = new Circle(e.clientX, e.clientY, 0);
 	}
-		
+
 });
 
 $(ghost).mouseup(function() {
 	dragging = false;
 	// Again, depends on modes
 	//context.beginPath();
-	if (mode < 4){
+	if (mode < 4) {
 		drawn.push(currShape);
 		gcontext.clearRect(0, 0, ghost.width, ghost.height);
 		redrawAll();
 		currShape = null;
 	}
-	
+
 });
 
 // Also depends on modes
 $(ghost).mousemove(function(e) {
 	if (mode < 4 && dragging) {
 		currShape.draw(gcontext, e.clientX, e.clientY);
-		if(mode == 0) {
+		if (mode == 0) {
 			currShape.path.push([e.clientX, e.clientY]);
-		}
-	} else if (false) {
-	}
+		} else {}
+	} else if (false) {}
 });
 
 /* ---------------------------------------------------------------------------*/
@@ -226,4 +234,3 @@ $(ghost).mousemove(function(e) {
 /* ---------------------------------------------------------------------------*/
 
 setRadius(radius);
-

@@ -87,6 +87,7 @@ var Circle = Shape.extend({
 		this.rad = Math.sqrt(Math.pow(this.x - mouseX, 2) + Math.pow(this.y - mouseY, 2));
 		ctx.arc(this.x, this.y, this.rad, 0, Math.PI * 2);
 		ctx.stroke();
+		ctx.beginPath();
 	},
 	special: function() {
 		context.arc(this.x, this.y, this.rad, 0, Math.PI * 2);
@@ -111,6 +112,7 @@ var Line = Shape.extend({
 			this.endX = mouseX;
 			this.endY = mouseY;
 		}
+		ctx.clearRect(0, 0, ghost.width, ghost.height);
 		ctx.beginPath();
 		//ctx.moveTo(this.x, this.y);
 		ctx.lineTo(this.x, this.y);
@@ -120,7 +122,11 @@ var Line = Shape.extend({
 		ctx.closePath();
 	},
 	special: function() {
-		this.draw(context);
+		context.beginPath();
+		context.lineTo(this.x, this.y);
+		context.lineTo(this.endX, this.endY);
+		context.stroke();
+		context.closePath();
 	}
 });
 

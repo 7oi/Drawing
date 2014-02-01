@@ -76,3 +76,18 @@
 #save:hover, #newCanvas:hover, #undo:hover, #redo:hover{
 	background-color: #818181;
 }
+#msg {
+	position: absolute;
+	display: none;
+	text-align: center;
+	font-size: 0.8em;
+	left: 45%;
+	top: 45%;
+	padding: 1%;
+	color: white;
+	width: 10%;
+	height: 10%;
+	border-radius: 10px;
+	background-color: #434343;
+	z-index: 4;
+}
