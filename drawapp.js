@@ -192,7 +192,7 @@ $(ghost).mousedown(function(e) {
 	} else if (mode == 2) {
 		currShape = new Rect(e.clientX, e.clientY, 0, 0);
 	} else if (mode == 3) {
-		currShape = new Circle(e.clientX, e.clientY, 100);
+		currShape = new Circle(e.clientX, e.clientY, 10);
 	}
 		
 });

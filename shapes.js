@@ -86,11 +86,11 @@ var Circle = Shape.extend({
 		ctx.clearRect(0, 0, ghost.width, ghost.height);
 		this.rad = Math.sqrt(Math.pow(this.x - mouseX, 2) + Math.pow(this.y - mouseY, 2));
 		ctx.arc(this.x, this.y, this.rad, 0, Math.PI * 2);
-		ctx.closePath();
 		ctx.stroke();
 	},
 	special: function() {
-		this.draw(context);
+		context.arc(this.x, this.y, this.rad, 0, Math.PI * 2);
+		context.stroke();
 	}
 });
 
