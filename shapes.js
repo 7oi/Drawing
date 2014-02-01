@@ -107,11 +107,14 @@ var Line = Shape.extend({
 	endX: 0,
 	endY: 0,
 	draw: function(ctx, mouseX, mouseY) {
-		this.endX = mouseX;
-		this.endY = mouseY;
-		ctx.clearRect(0, 0, ghost.width, ghost.height);
+		if (dragging) {
+			this.endX = mouseX;
+			this.endY = mouseY;
+		}
 		ctx.beginPath();
+		//ctx.moveTo(this.x, this.y);
 		ctx.lineTo(this.x, this.y);
+		//ctx.moveTo(this.endX, this.endY);
 		ctx.lineTo(this.endX, this.endY);
 		ctx.stroke();
 		ctx.closePath();
@@ -143,7 +146,7 @@ var FreeDraw = Shape.extend({
 		for (var i = 0, m = this.path.length; i < m; i++) {
 			this.draw(context, this.path[i][0], this.path[i][1]);
 		}
-		
+
 	}
 });
 

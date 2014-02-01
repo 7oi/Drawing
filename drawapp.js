@@ -200,7 +200,7 @@ $(ghost).mousedown(function(e) {
 $(ghost).mouseup(function() {
 	dragging = false;
 	// Again, depends on modes
-	context.beginPath();
+	//context.beginPath();
 	if (mode < 4){
 		drawn.push(currShape);
 		gcontext.clearRect(0, 0, ghost.width, ghost.height);
