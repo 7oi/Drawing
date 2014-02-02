@@ -257,7 +257,8 @@ body {
 	padding: 10px;
 	border: 3px #434343 solid;
 	background-color: #fff;
-	z-index: 101;
+	z-index: 1001;
+	overflow: scroll; 
 }
 
 #load-window table {
@@ -272,8 +273,12 @@ body {
 	text-align: left;
 } 
 
-#load-window .button {
-	float: right;
+#load-window .load {
+
+}
+
+#load-window .load-image-thumb {
+	width: 150px;
 }
 
 #textbox {
