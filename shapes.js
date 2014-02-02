@@ -27,8 +27,6 @@ var Shape = Base.extend({
 		this.y = y;
 		this.w = 0;
 		this.h = 0;
-		this.n = shapeCount;
-		shapeCount++;
 		this.color = context.strokeStyle;
 		this.lineW = context.lineWidth;
 	},
@@ -36,7 +34,6 @@ var Shape = Base.extend({
 	y: 0,
 	w: 0,
 	h: 0,
-	n: 0,
 	color: "",
 	lineW: 0,
 	draw: function() {
@@ -60,10 +57,22 @@ var Shape = Base.extend({
 	},
 	move: function (newX, newY) {
 		gcontext.clearRect(0, 0, ghost.width, ghost.height);
+		gcontext.lineWidth = this.lineW;
+		gcontext.strokeStyle = this.color;
+		gcontext.fillStyle = this.color;
 		this.x = newX;
 		this.y = newY;
 		this.special(gcontext);
-
+	},
+	positivity: function () {
+		if (this.w < 0) {
+			this.x += this.w;
+			this.w = -this.w;
+		}
+		if (this.h < 0) {
+			this.y += this.h;
+			this.h = -this.h;
+		}
 	}
 });
 
@@ -144,6 +153,9 @@ var Line = Shape.extend({
 	contains: function (mx, my) {
 		return (this.x - this.lineW <= mx) && (this.x + this.w + this.lineW >= mx) &&
 			(this.y - this.lineW <= my) && (this.y + this.h + this.lineW >= my);
+	},
+	positivity: function () {
+		
 	}
 });
 
@@ -154,30 +166,42 @@ var Line = Shape.extend({
 var FreeDraw = Shape.extend({
 	constructor: function(x, y) {
 		this.base(x, y);
-		path = new Array();
+		//path = new Array();
+		this.ex = x;
+		this.ey = y;
+		this.img = new Image();
 	},
-	path: [],
+	//path: [],
+	ex: 0,
+	ey: 0,
+	img: null,
 	draw: function(ctx, x, y) {
-		//ctx.beginPath();
 		ctx.lineTo(x, y);
-		ctx.moveTo(x, y);
 		ctx.stroke();
-		//ctx.closePath();
-		//ctx.arc(x, y, radius, 0, Math.PI * 2);
-		//ctx.beginPath();
-		//ctx.moveTo(x, y);
-		//ctx.fill();
-		//1ctx.closePath();
+		ctx.beginPath();
+		ctx.arc(x, y, radius, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.beginPath();
+		ctx.moveTo(x, y);
+		this.findBorder(x, y);
+		this.img.src = ghost.toDataURL("image/png");
 	},
 	special: function(ctx) {
-		//context.beginPath();
-		for (var i = 0, m = this.path.length; i < m; i++) {
-			ctx.lineTo(this.path[i][0], this.path[i][1]);
-			ctx.moveTo(this.path[i][0], this.path[i][1]);
-		}
-		ctx.stroke();
-		//context.closePath();
-
+		ctx.drawImage(this.img, 0, 0, ghost.width, ghost.height, this.x, this.y, this.w, this.h);
+	},
+	redraw: function  () {
+		context.drawImage(this.img, 0, 0, ghost.width, ghost.height, this.x, this.y, this.w, this.h);
+	},
+	findBorder: function  (x, y) {
+		this.x = Math.min(x, this.x);
+		this.y = Math.min(y, this.y);
+		this.ex = Math.max(x, this.ex);
+		this.ey = Math.max(y, this.ey);
+		this.w = this.ex - this.x;
+		this.h = this.ey - this.y;
+	},
+	makeImg: function  () {
+		// body...
 	}
 });
 

@@ -30,7 +30,6 @@ var radius = 1,
 	color = "black",
 	mode = 0,
 	currShape = '',
-	shapeCount = 0.
 	font = "sans-serif",
 	fontSize = "24px ",
 	fontStyle = "",
@@ -261,9 +260,10 @@ $(ghost).mousedown(function(e) {
 				// Set the offset of the click
 				dragoffx = e.clientX - selection.x;
 				dragoffy = e.clientY - selection.y;
-				
+
 				//undrawn.push(selection);
 				drawn[selN] = new Shape(0, 0);
+				selection.move(e.clientX - dragoffx, e.clientY - dragoffy);
 				redrawAll();
 				return;
 			}
@@ -282,6 +282,7 @@ $(ghost).mouseup(function() {
 	//context.beginPath();
 	if (mode < 4) {
 		gcontext.closePath();
+		currShape.positivity();
 		drawn.push(currShape);
 		currShape.redraw();
 		gcontext.clearRect(0, 0, ghost.width, ghost.height);
@@ -301,9 +302,6 @@ $(ghost).mouseup(function() {
 $(ghost).mousemove(function(e) {
 	if (mode < 4 && dragging) {
 		currShape.draw(gcontext, e.clientX, e.clientY);
-		if (mode == 0) {
-			currShape.path.push([e.clientX, e.clientY]);
-		} else {}
 	} else if (mode == 4) {
 
 	} else if (mode == 5 && dragging && selection != null) {
