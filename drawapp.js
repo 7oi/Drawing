@@ -99,7 +99,6 @@ $('#swatch').change(function() {
 	context.fillStyle = color;
 	gcontext.strokeStyle = color;
 	gcontext.fillStyle = color;
-	$('#swatch').css("background-color", color);
 	$('#textbox').css({
 		color: context.strokeStyle
 	})
@@ -130,8 +129,10 @@ $('#fontstyle').change(function() {
 
 // Change drawing mode
 $(".tool").click(function() {
-	mode = $(this).val();
 	$('#textbox').hide();
+	mode = $(this).attr('data-value');
+	$('.tool').removeClass('selected');
+	$(this).addClass('selected');
 });
 
 /* ---------------------------------------------------------------------------*/
