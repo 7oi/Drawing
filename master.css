@@ -2,15 +2,9 @@
 	box-sizing: border-box;
 	--moz-box-sizing: border-box;
 	font-family: sans-serif;
-
-	user-select: none;
-	-moz-user-select: none;
-	-webkit-user-select: none;
-	-ms-user-select: none;
 }
 
-
-#toolbar{
+#menubar {
 	width: 100%;
 	height: 50px;
 	padding: 10px;
@@ -21,7 +15,7 @@
 	z-index: 3;
 }
 
-.radctrl{
+.radctrl {
 	width: 30px;
 	height: 30px;
 	background-color: #4f4f4f;
@@ -30,11 +24,13 @@
 	padding: 3px;
 	-webkit-transform: rotate(90deg);
 }
-#radval{
+
+#radval {
 	width: 30px;
 	display: inline-block;
 }
-#swatch{
+
+#swatch {
 	font-size: 0.4em;
 	width: 30px;
 	height: 30px;
@@ -44,21 +40,24 @@
 	margin-left: 10px;
 	background-color: cyan;
 }
-#ghost{
+
+#ghost {
 	position: absolute;
   	background: transparent;
   	z-index: 2;
 }
-#canvas{
+
+#canvas {
 	position: absolute;
   	z-index: 1;
 }
 
-.swatch.active{
+.swatch.active {
 	border: 2px solid white;
 	box-shadow: inset 0px 1px 2px rgba(0, 0, 0, 0.5);
 }
-#newCanvas, #save, #undo, #redo{
+
+#newCanvas, #save, #undo, #redo {
 	float: right;
 	margin-right: 20px;
 	height: 30px;
@@ -66,7 +65,8 @@
 	border-radius: 10px;
 	background-color: #434343;
 }
-#tools{
+
+#tools {
 	float: left;
 	margin-left: 20px;
 	height: 30px;
@@ -74,9 +74,27 @@
 	border-radius: 10px;
 	background-color: #434343;
 }
-#save:hover, #newCanvas:hover, #undo:hover, #redo:hover{
+
+#toolbar {
+	position: fixed;
+	right: 0;
+	top: 10px;
+	z-index: 100;
+	padding: 10px;
+	background-color: #ccc;
+}
+
+#toolbar a {
+	display: inline-block;
+	width: 40px;
+	height: 40px;
+	background-color: #fff;
+}
+
+#save:hover, #newCanvas:hover, #undo:hover, #redo:hover {
 	background-color: #818181;
 }
+
 #msg {
 	position: absolute;
 	display: none;

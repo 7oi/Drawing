@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>Silly little drawing app</title>
+	<link rel="stylesheet" type="text/css" href="normalize.css">
 	<link rel="stylesheet" type="text/css" href="master.css">
 </head>
 <body style="margin: 0;">
@@ -12,7 +13,7 @@
 	</canvas>
 	
 	
-	<div id="toolbar">
+	<div id="menubar">
 		<div id="tools">
 			<button id="paint" class="tool" value="0">Paint</button>
 			<button id="line" class="tool" value="1">Line</button>
@@ -38,6 +39,18 @@
 			Redo
 		</div>
 	</div>
+
+	<ul id="toolbar">
+		<li class="toolbar-item"><a href="javascript:void(0)" class="tool" data-value="0" id="paint"></a></li>
+		<li class="toolbar-item"><a href="javascript:void(0)" class="tool" data-value="1" id="line"></a></li>
+		<li class="toolbar-item"><a href="javascript:void(0)" class="tool" data-value="2" id="rect"></a></li>
+		<li class="toolbar-item"><a href="javascript:void(0)" class="tool" data-value="3" id="circle"></a></li>
+		<li class="toolbar-item"><a href="javascript:void(0)" class="tool" data-value="4" id="move"></a></li>
+		<li class="toolbar-item"><a href="javascript:void(0)" class="tool" data-value="5" id="resize"></a></li>
+		<li class="toolbar-item"><a href="javascript:void(0)" class="tool" data-value="6" id="text"></a></li>
+		<li class="toolbar-item"><a href="javascript:void(0)" class="tool" data-value="7" id="color"></a></li>
+	</ul>
+
 	<div id="msg"></div>
 	<script type="text/javascript" src="Base.js"></script>
 	<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
