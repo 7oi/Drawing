@@ -90,12 +90,13 @@ $('#swatch').change(function() {
 	context.fillStyle = color;
 	gcontext.strokeStyle = color;
 	gcontext.fillStyle = color;
-	$('#swatch').css("background-color", color);
 });
 
 // Change drawing mode
 $(".tool").click(function() {
-	mode = $(this).val();
+	mode = $(this).attr('data-value');
+	$('.tool').removeClass('selected');
+	$(this).addClass('selected');
 });
 
 
