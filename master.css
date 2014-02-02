@@ -92,3 +92,11 @@
 	background-color: #434343;
 	z-index: 4;
 }
+#textbox {
+	background-color: transparent;
+	display: none;
+	overflow: hidden;
+	position: absolute;
+	padding: 0px;
+	margin: 0px;
+}

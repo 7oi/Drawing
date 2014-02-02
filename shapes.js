@@ -35,13 +35,16 @@ var Shape = Base.extend({
 	n: 0,
 	color: "",
 	lineW: 0,
+	draw: function () {
+		// Different between shapes
+	},
 	redraw: function() {
 		context.beginPath();
 		context.lineWidth = this.lineW;
 		context.strokeStyle = this.color;
 		context.fillStyle = this.color;
 		this.special();
-		context.beginPath();
+		context.closePath();
 		recall();
 	},
 	special: function() {
@@ -69,6 +72,10 @@ var Rect = Shape.extend({
 	},
 	special: function() {
 		context.strokeRect(this.x, this.y, this.w, this.h);
+	},
+	contains: function(mx, my) {
+		return (this.x <= mx) && (this.x + this.w >= mx) &&
+			(this.y <= my) && (this.y + this.h >= my);
 	}
 });
 
@@ -167,5 +174,52 @@ var FreeDraw = Shape.extend({
 /*								  - the nerd 								  */
 /* ---------------------------------------------------------------------------*/
 var Texts = Shape.extend({
-	
+	constructor: function(x, y, txt, w, h) {
+		this.base(x, y);
+		this.font = context.font;
+		this.txt = txt;
+		this.w = w;
+		this.lineH = h;
+		this.h = h;
+	},
+	font: "",
+	txt: "",
+	w: 0,
+	h: 0,
+	lineH: 0,
+	draw: function() {
+		this.wrapText(this.txt, this.x, this.y, this.w, this.lineH);
+	},
+
+	special: function() {
+		context.font = this.font;
+		this.draw();
+		recall();
+	},
+
+	// Nifty function borrowed from:
+	// http://www.html5canvastutorials.com/tutorials/html5-canvas-wrap-text-tutorial/
+	wrapText: function(txt, x, y, w, lineHeight) {
+		var words = this.txt.split(' ');
+		var line = '';
+
+		for (var n = 0; n < words.length; n++) {
+			var testLine = line + words[n] + ' ';
+			var metrics = context.measureText(testLine);
+			var testWidth = metrics.width;
+			if (testWidth > w && n > 0) {
+				context.fillText(line, x, y);
+				line = words[n] + ' ';
+				y += lineHeight;
+				this.h += lineHeight;
+			} else {
+				line = testLine;
+			}
+		}
+		context.fillText(line, x, y);
+	},
+	contains: function(mx, my) {
+		return (this.x <= mx) && (this.x + this.w >= mx) &&
+			(this.y <= my) && (this.y + this.h >= my);
+	}
 });

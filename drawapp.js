@@ -30,7 +30,14 @@ var radius = 1,
 	color = "black",
 	mode = 0,
 	currShape = '',
-	shapeCount = 0;
+	shapeCount = 0.
+	font = "serif",
+	fontSize = "24pt ",
+	fontStyle = "",
+	fontLineH = 39,
+	selection = 0,
+	dragoffx = 0,
+	dragoffy = 0;
 
 // Setting the size of the canvas
 canvas.width = window.innerWidth;
@@ -49,9 +56,11 @@ function recall() {
 	context.lineWidth = radius * 2;
 	context.strokeStyle = color;
 	context.fillStyle = color;
+	context.font = makeFont();
 	gcontext.lineWidth = radius * 2;
 	gcontext.strokeStyle = color;
 	gcontext.fillStyle = color;
+	gcontext.font = makeFont();
 }
 
 // Takes care of hindering clearing of the canvas when resizing window
@@ -91,14 +100,39 @@ $('#swatch').change(function() {
 	gcontext.strokeStyle = color;
 	gcontext.fillStyle = color;
 	$('#swatch').css("background-color", color);
+	$('#textbox').css({
+		color: context.strokeStyle
+	})
+});
+
+// Function to put together the font string canvas needs
+function makeFont() {
+	context.font = fontStyle + fontSize + font;
+}
+
+// Font: for selecting font
+$('#font').change(function() {
+	font = $(this).val();
+	makeFont();
+});
+
+// Fontsize
+$('#fontsize').change(function() {
+	fontSize = $(this).val() + "px ";
+	fontLineH = Math.round($(this).val() * 1.5);
+	makeFont();
+});
+
+$('#fontstyle').change(function() {
+	fontStyle = $(this).val() + " ";
+	makeFont();
 });
 
 // Change drawing mode
 $(".tool").click(function() {
 	mode = $(this).val();
+	$('#textbox').hide();
 });
-
-
 
 /* ---------------------------------------------------------------------------*/
 /*								CLEAR AND SAVE 								  */
@@ -106,20 +140,20 @@ $(".tool").click(function() {
 
 // A redraw function for the lot might come in handy
 function redrawAll() {
-	canvas.width = canvas.width;
+	context.clearRect(0, 0, canvas.width, canvas.height);
 	recall();
 	for (var i = 0, m = drawn.length; i < m; i++) {
 		drawn[i].redraw();
 	};
 }
 
-
+// Function to clear the canvas
 function clearCanvas() {
-	canvas.width = canvas.width;
+	context.clearRect(0, 0, canvas.width, canvas.height);
 	recall();
 }
 
-// Clear: A way to clear the canvas
+// New: provide a new, clear canvas
 $("#newCanvas").click(function() {
 	if (confirm("Are you sure?")) {
 		drawn = [];
@@ -159,6 +193,10 @@ var clearCanvas = function() {
 	recall();
 }
 
+/* ---------------------------------------------------------------------------*/
+/*								 UNDO & REDO								  */
+/* ---------------------------------------------------------------------------*/
+
 $("#undo").click(function() {
 	if (drawn.length > 0) {
 		undrawn.push(drawn.pop());
@@ -168,9 +206,10 @@ $("#undo").click(function() {
 		$('#msg').text("Nothing to undo").fadeIn();
 		setTimeout(function() {
 			$('#msg').fadeOut(1000);
-		}, 2000);		
+		}, 2000);
 	}
 });
+
 $("#redo").click(function() {
 	if (undrawn.length > 0) {
 		var temp = undrawn.pop()
@@ -184,6 +223,7 @@ $("#redo").click(function() {
 	}
 
 });
+
 /* ---------------------------------------------------------------------------*/
 /*								 MOUSE ACTIONS								  */
 /* ---------------------------------------------------------------------------*/
@@ -192,7 +232,6 @@ $(ghost).mousedown(function(e) {
 	dragging = true;
 	undrawn = [];
 	redoable = false;
-	// Following should depend on which mode is selected
 	if (mode == 0) {
 		currShape = new FreeDraw(e.clientX, e.clientY);
 		gcontext.beginPath();
@@ -202,6 +241,32 @@ $(ghost).mousedown(function(e) {
 		currShape = new Rect(e.clientX, e.clientY, 0, 0);
 	} else if (mode == 3) {
 		currShape = new Circle(e.clientX, e.clientY, 0);
+	} else if (mode == 4) {
+		$('#textbox').css({
+			top: e.clientY,
+			left: e.clientX,
+			width: 100,
+			height: 80,
+			font: context.font,
+			color: context.strokeStyle
+		}).show();
+	} else if (mode > 4) {
+		var l = drawn.length;
+		for (var i = l - 1; i >= 0; i--) {
+			if (drawn[i].contains(e.clientX, e.clientY)) {
+				var mySel = drawn[i];
+				// Keep track of where in the object we clicked
+				// so we can move it smoothly (see mousemove)
+				dragoffx = e.clientX - mySel.x;
+				dragoffy = e.clientY - mySel.y;
+				dragging = true;
+				selection = mySel;
+				undrawn.push(selection);
+				drawn[selection.n] = new Shape(0, 0);
+				return;
+			}
+			selection = null;
+		}
 	}
 
 });
@@ -216,6 +281,8 @@ $(ghost).mouseup(function() {
 		currShape.redraw();
 		gcontext.clearRect(0, 0, ghost.width, ghost.height);
 		currShape = null;
+	} else if (mode == 4) {
+		$('#textbox').focus();
 	}
 
 });
@@ -227,7 +294,24 @@ $(ghost).mousemove(function(e) {
 		if (mode == 0) {
 			currShape.path.push([e.clientX, e.clientY]);
 		} else {}
-	} else if (false) {}
+	} else if (mode == 4) {
+		$('#textbox').focus();
+	} else if (mode == 5 && dragging && selection) {
+		selection.x = e.clientX - dragoffx;
+		selection.y = e.clientY - dragoffy;
+		selection.draw(gcontext, e.clientX, e.clientY);
+	}
+});
+
+// Pressing ctrl+enter in textbox kicks you out of it
+$('#textbox').keypress(function(event) {
+	if (event.which == 13 && !(typeof $(this).val() === 'undefined')) {
+		var p = $(this).position();
+		currShape = new Texts(p.left, p.top + (fontLineH * 0.76), $(this).val(), $(this).width(), fontLineH);
+		currShape.draw();
+		drawn.push(currShape);
+		$(this).val('').hide();
+	}
 });
 
 /* ---------------------------------------------------------------------------*/
@@ -235,3 +319,4 @@ $(ghost).mousemove(function(e) {
 /* ---------------------------------------------------------------------------*/
 
 setRadius(radius);
+context.font = makeFont();
