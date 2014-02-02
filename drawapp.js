@@ -283,7 +283,7 @@ $(ghost).mouseup(function() {
 		gcontext.clearRect(0, 0, ghost.width, ghost.height);
 		currShape = null;
 	} else if (mode == 4) {
-		$('#textbox').focus();
+		
 	}
 
 });
@@ -296,7 +296,7 @@ $(ghost).mousemove(function(e) {
 			currShape.path.push([e.clientX, e.clientY]);
 		} else {}
 	} else if (mode == 4) {
-		$('#textbox').focus();
+		
 	} else if (mode == 5 && dragging && selection) {
 		selection.x = e.clientX - dragoffx;
 		selection.y = e.clientY - dragoffy;

@@ -225,7 +225,7 @@
 	height: 10%;
 	border-radius: 10px;
 	background-color: #434343;
-	z-index: 4;
+	z-index: 101;
 }
 #textbox {
 	background-color: transparent;
@@ -234,4 +234,5 @@
 	position: absolute;
 	padding: 0px;
 	margin: 0px;
+	z-index: 4;
 }
