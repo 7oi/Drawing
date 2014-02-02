@@ -276,7 +276,7 @@ $(ghost).mousedown(function(e) {
 
 });
 
-$(ghost).mouseup(function() {
+$(ghost).mouseup(function(e) {
 	dragging = false;
 	// Again, depends on modes
 	//context.beginPath();
@@ -290,6 +290,10 @@ $(ghost).mouseup(function() {
 	} else if (mode == 4) {
 
 	} else if (mode == 5 && selection != null) {
+		if (!(typeof selection.img === 'undefined'))
+			selection.img.src = ghost.toDataURL("image/png");
+		selection.x = e.clientX - dragoffx;
+		selection.y = e.clientY - dragoffy;
 		drawn[selN] = selection;
 		redrawAll();
 		gcontext.clearRect(0, 0, ghost.width, ghost.height);

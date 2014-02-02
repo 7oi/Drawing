@@ -187,22 +187,24 @@ var FreeDraw = Shape.extend({
 		this.img.src = ghost.toDataURL("image/png");
 	},
 	special: function(ctx) {
-		ctx.drawImage(this.img, 0, 0, ghost.width, ghost.height, this.x, this.y, this.w, this.h);
+		
 	},
 	redraw: function  () {
-		context.drawImage(this.img, 0, 0, ghost.width, ghost.height, this.x, this.y, this.w, this.h);
+		context.drawImage(this.img, this.x, this.y, this.w, this.h, this.x, this.y, this.w, this.h);
 	},
 	findBorder: function  (x, y) {
-		this.x = Math.min(x, this.x);
-		this.y = Math.min(y, this.y);
-		this.ex = Math.max(x, this.ex);
-		this.ey = Math.max(y, this.ey);
+		this.x = Math.min(x, this.x - this.lineW);
+		this.y = Math.min(y, this.y - this.lineW);
+		this.ex = Math.max(x, this.ex + this.lineW);
+		this.ey = Math.max(y, this.ey + this.lineW);
 		this.w = this.ex - this.x;
 		this.h = this.ey - this.y;
 	},
-	makeImg: function  () {
-		// body...
-	}
+	move: function (newX, newY) {
+		gcontext.clearRect(0, 0, ghost.width, ghost.height);
+		gcontext.drawImage(this.img, this.x, this.y, this.w, this.h, newX, newY, this.w, this.h);
+		//this.img.src = ghost.toDataURL("image/png");
+	},
 });
 
 /* ---------------------------------------------------------------------------*/
@@ -254,5 +256,5 @@ var Texts = Shape.extend({
 	contains: function  (mx, my) {
 		return (this.x <= mx) && (this.x + this.w >= mx) &&
 			(this.y - this.lineW <= my) && (this.y + this.h - this.lineW >= my);
-	}
+	},
 });
