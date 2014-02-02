@@ -184,32 +184,36 @@ $("#myDrawings").click(function(){
 
 	var loadWindow = $("#load-window");
 
-	// if loadWindow.hidden(), else close
+	if (loadWindow.is(":hidden")) {
 
-	loadWindow.show();
+		loadWindow.show();
 
-	if ($.totalStorage('imgsaves')) {
+		if ($.totalStorage('imgsaves')) {
 
- 		var saves = [];
+	 		var saves = [];
 
-		saves = $.totalStorage('imgsaves');
+			saves = $.totalStorage('imgsaves').reverse();
 
+			$.each(saves,function(i,val){
+				$(loadWindow).append('<a href="javascript:void(0);" class="load-image"><img class="load-image-thumb" src="'+val.uri+'"></a>');
+			});
 
+		} else {
+			loadWindow.append('No items to show.');
+		}
 
 	} else {
-		loadWindow.append('No items to show.');
+		loadWindow.hide();
+		loadWindow.empty();
 	}
+})
 
-	$('<a></a>').attr({
-		'href': 'javascript:void(0);',
-		'class': 'button',
-		'id': 'load',
-		'data-uri': ''
-	});
-
-
-
-
+$("body").on('click','.load-image',function(){
+	var loadWindow = $("#load-window");
+	var link = $(this);
+	loadImage(link.children().attr('src'));
+	loadWindow.hide();
+	loadWindow.empty();
 })
 
 var loadImage = function(imguri) {
