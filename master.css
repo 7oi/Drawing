@@ -1,3 +1,5 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,700);
+
 @font-face {
 	font-family: 'drawing';
 	src:url('fonts/drawing.eot?-3kijcd');
@@ -26,7 +28,10 @@
 * {
 	box-sizing: border-box;
 	--moz-box-sizing: border-box;
-	font-family: sans-serif;
+}
+
+body {
+	font-family: 'Open Sans', sans-serif;
 }
 
 #menubar {
@@ -80,22 +85,40 @@
 	box-shadow: inset 0px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-#newCanvas, #save, #undo, #redo {
-	float: right;
-	margin-right: 20px;
-	height: 30px;
-	padding: 8px;
-	border-radius: 10px;
+.button {
+	display: inline-block;
+	padding: 5px 12px;
+	border-radius: 3px;
 	background-color: #434343;
+	color: #fff;
+	font-weight: bold;
+	font-size: 14px;
+	text-transform: uppercase;
+	line-height: 1.4;
+	text-decoration: none;
 }
 
-#tools {
-	float: left;
+.button:hover {
+	background-color: #818181;
+}
+
+#stroke-width {
+	float: right;
 	margin-left: 20px;
 	height: 30px;
 	padding: 3px;
-	border-radius: 10px;
+	border-radius: 3px;
 	background-color: #434343;
+}
+
+#menu {
+	margin: 0;
+}
+
+#menu li {
+	float: left;
+	list-style-type: none;
+	padding-left: 5px;
 }
 
 #toolbar {
@@ -208,10 +231,6 @@
 	color: #000;
 }
 
-#save:hover, #newCanvas:hover, #undo:hover, #redo:hover {
-	background-color: #818181;
-}
-
 #msg {
 	position: absolute;
 	display: none;
@@ -225,8 +244,38 @@
 	height: 10%;
 	border-radius: 10px;
 	background-color: #434343;
+	z-index: 1000;
+}
+
+#load-window {
+	position: absolute;
+	display: none;
+	width: 500px;
+	height: 300px;
+	left: 15%;
+	top: 15%;
+	padding: 10px;
+	border: 3px #434343 solid;
+	background-color: #fff;
 	z-index: 101;
 }
+
+#load-window table {
+	width: 100%;
+}
+
+#load-window tr {
+	height: 40px;
+}
+
+#load-window .load-image-title {
+	text-align: left;
+} 
+
+#load-window .button {
+	float: right;
+}
+
 #textbox {
 	background-color: transparent;
 	display: none;

@@ -180,6 +180,38 @@ $("#save").click(function saveImage() {
 
 })
 
+$("#myDrawings").click(function(){
+
+	var loadWindow = $("#load-window");
+
+	// if loadWindow.hidden(), else close
+
+	loadWindow.show();
+
+	if ($.totalStorage('imgsaves')) {
+
+ 		var saves = [];
+
+		saves = $.totalStorage('imgsaves');
+
+
+
+	} else {
+		loadWindow.append('No items to show.');
+	}
+
+	$('<a></a>').attr({
+		'href': 'javascript:void(0);',
+		'class': 'button',
+		'id': 'load',
+		'data-uri': ''
+	});
+
+
+
+
+})
+
 var loadImage = function(imguri) {
 	clearCanvas();
 	var img = new Image();
