@@ -1,3 +1,28 @@
+@font-face {
+	font-family: 'drawing';
+	src:url('fonts/drawing.eot?-3kijcd');
+	src:url('fonts/drawing.eot?#iefix-3kijcd') format('embedded-opentype'),
+		url('fonts/drawing.woff?-3kijcd') format('woff'),
+		url('fonts/drawing.ttf?-3kijcd') format('truetype'),
+		url('fonts/drawing.svg?-3kijcd#drawing') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+[class^="icm-icon-"], [class*=" icm-icon-"] {
+	font-family: 'drawing';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
 * {
 	box-sizing: border-box;
 	--moz-box-sizing: border-box;
@@ -77,18 +102,112 @@
 
 #toolbar {
 	position: fixed;
-	right: 0;
-	top: 10px;
+	right: 10px;
+	top: 50px;
 	z-index: 100;
 	padding: 10px;
 	background-color: #ccc;
 }
 
+#toolbar li {
+	list-style-type: none;
+}
+
 #toolbar a {
 	display: inline-block;
+	overflow: hidden;
+	text-decoration: none;
+	color: #000;
 	width: 40px;
 	height: 40px;
+	background-color: #eee;
+}
+
+#toolbar a:hover {
+	background-color: #fff;	
+}
+
+#toolbar a.selected {
 	background-color: #fff;
+}
+
+#toolbar .paint-icon:before {
+	display: block;
+	-webkit-transform: translateY(17px) translateX(-6px) rotate(0deg);
+	content: "";
+	width: 0;
+	height: 0;
+	border-top: 4px solid rgba(0, 0, 0, 0);
+	border-bottom: 4px solid rgba(0, 0, 0, 0);
+	border-right: 4px solid #000;
+}
+
+#toolbar .paint-icon {
+	border-bottom: 8px solid #000;
+	-webkit-transform: translateY(0px) translateX(1px) rotate(-45deg);
+	position: absolute;
+	width: 25px;
+	height: 25px;
+}
+
+#toolbar .line-icon {
+	border-bottom: 3px solid #000;
+	-webkit-transform: translateY(-4px) translateX(-5px) rotate(-45deg);
+	position: absolute;
+	width: 30px;
+	height: 30px;
+}
+
+#toolbar .rect-icon {
+	border: 3px solid #000;
+	width: 24px;
+	height: 24px;
+	position: absolute;
+	margin-left: 8px;
+	margin-top: 8px;
+}
+
+#toolbar .circle-icon {
+	border: 3px solid #000;
+	width: 26px;
+	height: 26px;
+	position: absolute;
+	margin-left: 7px;
+	margin-top: 7px;
+	border-radius: 50%;
+}
+
+.icm-icon-resize:before {
+	content: "\e2b6";
+	position: absolute;
+	margin-top: 9px;
+	margin-left: 8px;
+	font-size: 21px;
+}
+.icm-icon-move:before {
+	content: "\e242";
+	position: absolute;
+	margin-top: 7px;
+	margin-left: 6px;
+	font-size: 25px;
+}
+.icm-icon-undo:before {
+	content: "\e0dd";
+}
+.icm-icon-redo:before {
+	content: "\e0de";
+}
+
+
+#toolbar .text-icon:before {
+	content: "T";
+	position: absolute;
+	font-family: "Times",serif;
+	font-size: 29px;
+	font-weight: bold;
+	margin-top: 4px;
+	margin-left: 10px;
+	color: #000;
 }
 
 #save:hover, #newCanvas:hover, #undo:hover, #redo:hover {
