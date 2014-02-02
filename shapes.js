@@ -20,7 +20,6 @@
 /*								- mother of all 							  */
 /* ---------------------------------------------------------------------------*/
 
-
 var Shape = Base.extend({
 	constructor: function(x, y) {
 		this.x = x;
@@ -36,25 +35,31 @@ var Shape = Base.extend({
 	h: 0,
 	color: "",
 	lineW: 0,
+	// This function is meant for drawing the shapes on the ghost canvas
 	draw: function() {
-		// Different between shapes
+		// Different between shapes. We'll make an empty one for the base shape
+		// Maybe we'll need it?
 	},
+	// This function takes care of redrawing on the main canvas, not the ghost
 	redraw: function() {
 		context.lineWidth = this.lineW;
 		context.strokeStyle = this.color;
 		context.fillStyle = this.color;
 		context.beginPath();
+		// Now, this special function is to make things a bit more DRY
 		this.special(context);
 		context.closePath();
 		recall();
 	},
 	special: function(ctx) {
-		// Does nothing for the base class
+		// Does nothing for the base class, I'm afraid
 	},
+	// Checks if shape contains point
 	contains: function(mx, my) {
 		return (this.x - this.lineW <= mx) && (this.x + this.w + this.lineW >= mx) &&
 			(this.y - this.lineW <= my) && (this.y + this.h + this.lineW >= my);
 	},
+	// Guess what this function does?
 	move: function (newX, newY) {
 		gcontext.clearRect(0, 0, ghost.width, ghost.height);
 		gcontext.lineWidth = this.lineW;
@@ -63,10 +68,12 @@ var Shape = Base.extend({
 		this.x = newX;
 		this.y = newY;
 		gcontext.beginPath();
+		// Again, something special for DRY developing
 		this.special(gcontext);
 		gcontext.closePath();
 	},
-	positivity: function () {
+	// We ran into problems with negative numbers, which this function tries to fix.
+	positivity: function () {		
 		if (this.w < 0) {
 			this.x += this.w;
 			this.w = -this.w;
@@ -95,6 +102,7 @@ var Rect = Shape.extend({
 	special: function(ctx) {
 		ctx.strokeRect(this.x, this.y, this.w, this.h);
 	}
+	// Was that it? So the base shape did most of the work for this one...
 });
 
 /* ---------------------------------------------------------------------------*/
@@ -107,23 +115,24 @@ var Circle = Shape.extend({
 		this.rad = 0;
 	},
 	rad: 0,
+	// Handy radius calculator
 	findRad: function (x, y) {
 		return Math.sqrt(Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2));
 	},
+	// The circle drawing works from the center outwards
 	draw: function(ctx, mouseX, mouseY) {
 		ctx.clearRect(0, 0, ghost.width, ghost.height);
-		this.rad = this.findRad(mouseX, mouseY);
-		ctx.arc(this.x, this.y, this.rad, 0, Math.PI * 2);
-		ctx.stroke();
-		ctx.beginPath();
+		this.rad = this.findRad(mouseX, mouseY);	// Handy indeed
+		this.special(ctx);	// DRY!!!
 	},
 	special: function(ctx) {
 		ctx.arc(this.x, this.y, this.rad, 0, Math.PI * 2);
 		ctx.stroke();
 		ctx.beginPath();
 	},
+	// Refined contains function for circles
 	contains: function  (mouseX, mouseY) {
-		return this.findRad(mouseX, mouseY) <= this.rad;
+		return this.findRad(mouseX, mouseY) <= this.rad;	// So handy
 	}
 });
 
@@ -142,6 +151,7 @@ var Line = Shape.extend({
 		}
 		ctx.clearRect(0, 0, ghost.width, ghost.height);
 		ctx.beginPath();
+		// Can't use special() here. Dang...
 		ctx.lineTo(this.x, this.y);
 		ctx.lineTo(mouseX, mouseY);
 		ctx.stroke();
@@ -152,12 +162,8 @@ var Line = Shape.extend({
 		ctx.lineTo(this.x + this.w, this.y + this.h);
 		ctx.stroke();
 	},
-	contains: function (mx, my) {
-		return (this.x - this.lineW <= mx) && (this.x + this.w + this.lineW >= mx) &&
-			(this.y - this.lineW <= my) && (this.y + this.h + this.lineW >= my);
-	},
 	positivity: function () {
-		
+		// Positivity does nothing for this line.
 	}
 });
 
@@ -165,15 +171,17 @@ var Line = Shape.extend({
 /*							  THE FREEDRAW OBJECT  							  */
 /*							 - the carefree hippie							  */
 /* ---------------------------------------------------------------------------*/
+
 var FreeDraw = Shape.extend({
+	/* As to be expected, the freedraw object was less of a carefree hippie   *
+	 * and more of a troublemaker that didn't want to behave. Therefor it's   *
+	 * path was converted into an image, releiving a few headaches.			  */
 	constructor: function(x, y) {
 		this.base(x, y);
-		//path = new Array();
 		this.ex = x;
 		this.ey = y;
 		this.img = new Image();
 	},
-	//path: [],
 	ex: 0,
 	ey: 0,
 	img: null,
@@ -185,12 +193,8 @@ var FreeDraw = Shape.extend({
 		ctx.fill();
 		ctx.beginPath();
 		ctx.moveTo(x, y);
-		if (dragging)
-			this.findBorder(x, y);
+		this.findBorder(x, y);
 		this.img.src = ghost.toDataURL("image/png");
-	},
-	special: function(ctx) {
-		
 	},
 	redraw: function  () {
 		context.drawImage(this.img, this.x, this.y, this.w, this.h, this.x, this.y, this.w, this.h);
