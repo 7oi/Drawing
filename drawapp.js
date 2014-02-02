@@ -35,7 +35,8 @@ var radius = 1,
 	fontSize = "24pt ",
 	fontStyle = "",
 	fontLineH = 39,
-	selection = 0,
+	selection = null,
+	selN = -1,
 	dragoffx = 0,
 	dragoffy = 0;
 
@@ -237,11 +238,11 @@ $(ghost).mousedown(function(e) {
 		currShape = new FreeDraw(e.clientX, e.clientY);
 		gcontext.beginPath();
 	} else if (mode == 1) {
-		currShape = new Line(e.clientX, e.clientY, e.clientX, e.clientY);
+		currShape = new Line(e.clientX, e.clientY);
 	} else if (mode == 2) {
-		currShape = new Rect(e.clientX, e.clientY, 0, 0);
+		currShape = new Rect(e.clientX, e.clientY);
 	} else if (mode == 3) {
-		currShape = new Circle(e.clientX, e.clientY, 0);
+		currShape = new Circle(e.clientX, e.clientY);
 	} else if (mode == 4) {
 		$('#textbox').css({
 			top: e.clientY,
@@ -251,22 +252,25 @@ $(ghost).mousedown(function(e) {
 			font: context.font,
 			color: context.strokeStyle
 		}).show();
-	} else if (mode > 4) {
+	} else if (mode == 5) {
 		var l = drawn.length;
 		for (var i = l - 1; i >= 0; i--) {
 			if (drawn[i].contains(e.clientX, e.clientY)) {
-				var mySel = drawn[i];
-				// Keep track of where in the object we clicked
-				// so we can move it smoothly (see mousemove)
-				dragoffx = e.clientX - mySel.x;
-				dragoffy = e.clientY - mySel.y;
-				dragging = true;
-				selection = mySel;
-				undrawn.push(selection);
-				drawn[selection.n] = new Shape(0, 0);
+				selection = drawn[i];
+				selN = i;
+				// Set the offset of the click
+				dragoffx = e.clientX - selection.x;
+				dragoffy = e.clientY - selection.y;
+				
+				//undrawn.push(selection);
+				drawn[selN] = new Shape(0, 0);
+				redrawAll();
 				return;
 			}
-			selection = null;
+			if (selection != null) {
+				selection = null;
+				selN = -1;
+			}
 		}
 	}
 
@@ -283,7 +287,12 @@ $(ghost).mouseup(function() {
 		gcontext.clearRect(0, 0, ghost.width, ghost.height);
 		currShape = null;
 	} else if (mode == 4) {
-		
+
+	} else if (mode == 5 && selection != null) {
+		drawn[selN] = selection;
+		redrawAll();
+		gcontext.clearRect(0, 0, ghost.width, ghost.height);
+		selection = null;
 	}
 
 });
@@ -296,11 +305,9 @@ $(ghost).mousemove(function(e) {
 			currShape.path.push([e.clientX, e.clientY]);
 		} else {}
 	} else if (mode == 4) {
-		
-	} else if (mode == 5 && dragging && selection) {
-		selection.x = e.clientX - dragoffx;
-		selection.y = e.clientY - dragoffy;
-		selection.draw(gcontext, e.clientX, e.clientY);
+
+	} else if (mode == 5 && dragging && selection != null) {
+		selection.move(e.clientX - dragoffx, e.clientY - dragoffy);
 	}
 });
 

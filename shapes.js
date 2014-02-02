@@ -25,6 +25,8 @@ var Shape = Base.extend({
 	constructor: function(x, y) {
 		this.x = x;
 		this.y = y;
+		this.w = 0;
+		this.h = 0;
 		this.n = shapeCount;
 		shapeCount++;
 		this.color = context.strokeStyle;
@@ -32,23 +34,36 @@ var Shape = Base.extend({
 	},
 	x: 0,
 	y: 0,
+	w: 0,
+	h: 0,
 	n: 0,
 	color: "",
 	lineW: 0,
-	draw: function () {
+	draw: function() {
 		// Different between shapes
 	},
 	redraw: function() {
-		context.beginPath();
 		context.lineWidth = this.lineW;
 		context.strokeStyle = this.color;
 		context.fillStyle = this.color;
-		this.special();
+		context.beginPath();
+		this.special(context);
 		context.closePath();
 		recall();
 	},
-	special: function() {
+	special: function(ctx) {
 		// Does nothing for the base class
+	},
+	contains: function(mx, my) {
+		return (this.x - this.lineW <= mx) && (this.x + this.w + this.lineW >= mx) &&
+			(this.y - this.lineW <= my) && (this.y + this.h + this.lineW >= my);
+	},
+	move: function (newX, newY) {
+		gcontext.clearRect(0, 0, ghost.width, ghost.height);
+		this.x = newX;
+		this.y = newY;
+		this.special(gcontext);
+
 	}
 });
 
@@ -57,25 +72,17 @@ var Shape = Base.extend({
 /*						  - the square in the family 						  */
 /* ---------------------------------------------------------------------------*/
 var Rect = Shape.extend({
-	constructor: function(x, y, w, h) {
+	constructor: function(x, y) {
 		this.base(x, y);
-		this.w = w;
-		this.h = h;
 	},
-	w: 10,
-	h: 10,
 	draw: function(ctx, mouseX, mouseY) {
 		ctx.clearRect(0, 0, ghost.width, ghost.height);
 		this.w = mouseX - this.x;
 		this.h = mouseY - this.y;
 		ctx.strokeRect(this.x, this.y, this.w, this.h);
 	},
-	special: function() {
-		context.strokeRect(this.x, this.y, this.w, this.h);
-	},
-	contains: function(mx, my) {
-		return (this.x <= mx) && (this.x + this.w >= mx) &&
-			(this.y <= my) && (this.y + this.h >= my);
+	special: function(ctx) {
+		ctx.strokeRect(this.x, this.y, this.w, this.h);
 	}
 });
 
@@ -84,21 +91,28 @@ var Rect = Shape.extend({
 /*							 - all round all around 						  */
 /* ---------------------------------------------------------------------------*/
 var Circle = Shape.extend({
-	constructor: function(x, y, rad) {
+	constructor: function(x, y) {
 		this.base(x, y);
-		this.rad = rad;
+		this.rad = 0;
 	},
 	rad: 0,
+	findRad: function (x, y) {
+		return Math.sqrt(Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2));
+	},
 	draw: function(ctx, mouseX, mouseY) {
 		ctx.clearRect(0, 0, ghost.width, ghost.height);
-		this.rad = Math.sqrt(Math.pow(this.x - mouseX, 2) + Math.pow(this.y - mouseY, 2));
+		this.rad = this.findRad(mouseX, mouseY);
 		ctx.arc(this.x, this.y, this.rad, 0, Math.PI * 2);
 		ctx.stroke();
 		ctx.beginPath();
 	},
-	special: function() {
-		context.arc(this.x, this.y, this.rad, 0, Math.PI * 2);
-		context.stroke();
+	special: function(ctx) {
+		ctx.arc(this.x, this.y, this.rad, 0, Math.PI * 2);
+		ctx.stroke();
+		ctx.beginPath();
+	},
+	contains: function  (mouseX, mouseY) {
+		return this.findRad(mouseX, mouseY) <= this.rad;
 	}
 });
 
@@ -107,31 +121,29 @@ var Circle = Shape.extend({
 /*								- gone straight 							  */
 /* ---------------------------------------------------------------------------*/
 var Line = Shape.extend({
-	constructor: function(x, y, endX, endY) {
+	constructor: function(x, y) {
 		this.base(x, y);
-		this.endX = endX;
-		this.endY = endY;
 	},
-	endX: 0,
-	endY: 0,
 	draw: function(ctx, mouseX, mouseY) {
 		if (dragging) {
-			this.endX = mouseX;
-			this.endY = mouseY;
+			this.w = mouseX - this.x;
+			this.h = mouseY - this.y;
 		}
 		ctx.clearRect(0, 0, ghost.width, ghost.height);
 		ctx.beginPath();
 		ctx.lineTo(this.x, this.y);
-		ctx.lineTo(this.endX, this.endY);
+		ctx.lineTo(mouseX, mouseY);
 		ctx.stroke();
 		ctx.closePath();
 	},
-	special: function() {
-		context.beginPath();
-		context.lineTo(this.x, this.y);
-		context.lineTo(this.endX, this.endY);
-		context.stroke();
-		context.closePath();
+	special: function(ctx) {
+		ctx.lineTo(this.x, this.y);
+		ctx.lineTo(this.x + this.w, this.y + this.h);
+		ctx.stroke();
+	},
+	contains: function (mx, my) {
+		return (this.x - this.lineW <= mx) && (this.x + this.w + this.lineW >= mx) &&
+			(this.y - this.lineW <= my) && (this.y + this.h + this.lineW >= my);
 	}
 });
 
@@ -157,14 +169,14 @@ var FreeDraw = Shape.extend({
 		//ctx.fill();
 		//1ctx.closePath();
 	},
-	special: function() {
-		context.beginPath();
+	special: function(ctx) {
+		//context.beginPath();
 		for (var i = 0, m = this.path.length; i < m; i++) {
-			context.lineTo(this.path[i][0], this.path[i][1]);
-			context.moveTo(this.path[i][0], this.path[i][1]);
+			ctx.lineTo(this.path[i][0], this.path[i][1]);
+			ctx.moveTo(this.path[i][0], this.path[i][1]);
 		}
-		context.stroke();
-		context.closePath();
+		ctx.stroke();
+		//context.closePath();
 
 	}
 });
@@ -179,36 +191,33 @@ var Texts = Shape.extend({
 		this.font = context.font;
 		this.txt = txt;
 		this.w = w;
-		this.lineH = h;
+		this.lineW = h; // Even though it's called lineW, it'll work
 		this.h = h;
 	},
 	font: "",
 	txt: "",
-	w: 0,
-	h: 0,
-	lineH: 0,
 	draw: function() {
-		this.wrapText(this.txt, this.x, this.y, this.w, this.lineH);
+		this.wrapText(context, this.txt, this.x, this.y, this.w, this.lineW);
 	},
 
-	special: function() {
-		context.font = this.font;
-		this.draw();
+	special: function(ctx) {
+		ctx.font = this.font;
+		this.wrapText(ctx, this.txt, this.x, this.y, this.w, this.lineW);
 		recall();
 	},
 
 	// Nifty function borrowed from:
 	// http://www.html5canvastutorials.com/tutorials/html5-canvas-wrap-text-tutorial/
-	wrapText: function(txt, x, y, w, lineHeight) {
+	wrapText: function(ctx, txt, x, y, w, lineHeight) {
 		var words = this.txt.split(' ');
 		var line = '';
 
 		for (var n = 0; n < words.length; n++) {
 			var testLine = line + words[n] + ' ';
-			var metrics = context.measureText(testLine);
+			var metrics = ctx.measureText(testLine);
 			var testWidth = metrics.width;
 			if (testWidth > w && n > 0) {
-				context.fillText(line, x, y);
+				ctx.fillText(line, x, y);
 				line = words[n] + ' ';
 				y += lineHeight;
 				this.h += lineHeight;
@@ -216,10 +225,10 @@ var Texts = Shape.extend({
 				line = testLine;
 			}
 		}
-		context.fillText(line, x, y);
+		ctx.fillText(line, x, y);
 	},
-	contains: function(mx, my) {
+	contains: function  (mx, my) {
 		return (this.x <= mx) && (this.x + this.w >= mx) &&
-			(this.y <= my) && (this.y + this.h >= my);
+			(this.y - this.lineW <= my) && (this.y + this.h - this.lineW >= my);
 	}
 });
