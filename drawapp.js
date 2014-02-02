@@ -133,6 +133,16 @@ $(".tool").click(function() {
 	mode = $(this).attr('data-value');
 	$('.tool').removeClass('selected');
 	$(this).addClass('selected');
+	if (mode < 4) {
+		$("#font-menu").hide();
+		$("#stroke-width").show();
+	} else if (mode == 4) {
+		$("#font-menu").show();
+		$("#stroke-width").hide();
+	} else {
+		$("#font-menu").hide();
+		$("#stroke-width").hide();
+	}
 });
 
 /* ---------------------------------------------------------------------------*/
@@ -282,7 +292,7 @@ $(ghost).mousedown(function(e) {
 		$('#textbox').css({
 			top: e.clientY,
 			left: e.clientX,
-			width: 100,
+			width: 300,
 			height: 80,
 			font: context.font,
 			color: context.strokeStyle

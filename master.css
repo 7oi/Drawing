@@ -102,13 +102,20 @@ body {
 	background-color: #818181;
 }
 
-#stroke-width {
+#stroke-width, #font-menu {
 	float: right;
 	margin-left: 20px;
-	height: 30px;
-	padding: 3px;
+	padding: 5px 12px;
 	border-radius: 3px;
 	background-color: #434343;
+}
+
+#stroke-width {
+	display: none;
+	font-weight: bold;
+	font-size: 14px;
+	text-transform: uppercase;
+	line-height: 1.4;
 }
 
 #menu {
@@ -116,6 +123,18 @@ body {
 }
 
 #menu li {
+	float: left;
+	list-style-type: none;
+	padding-left: 5px;
+}
+
+#font-menu {
+	float: right;
+	margin: 0;
+	display: none;
+}
+
+#font-menu li {
 	float: left;
 	list-style-type: none;
 	padding-left: 5px;
@@ -219,7 +238,6 @@ body {
 	content: "\e0de";
 }
 
-
 #toolbar .text-icon:before {
 	content: "T";
 	position: absolute;
@@ -289,4 +307,5 @@ body {
 	padding: 0px;
 	margin: 0px;
 	z-index: 4;
+	width: 500px;
 }
