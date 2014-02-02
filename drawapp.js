@@ -188,6 +188,11 @@ $("#save").click(function saveImage() {
 
 	$.totalStorage('imgsaves', saves);
 
+	$('#msg').text("Saved!").fadeIn();
+	setTimeout(function() {
+		$('#msg').fadeOut(1000);
+	}, 2000);
+
 })
 
 $("#myDrawings").click(function(){
