@@ -62,7 +62,9 @@ var Shape = Base.extend({
 		gcontext.fillStyle = this.color;
 		this.x = newX;
 		this.y = newY;
+		gcontext.beginPath();
 		this.special(gcontext);
+		gcontext.closePath();
 	},
 	positivity: function () {
 		if (this.w < 0) {
@@ -183,7 +185,8 @@ var FreeDraw = Shape.extend({
 		ctx.fill();
 		ctx.beginPath();
 		ctx.moveTo(x, y);
-		this.findBorder(x, y);
+		if (dragging)
+			this.findBorder(x, y);
 		this.img.src = ghost.toDataURL("image/png");
 	},
 	special: function(ctx) {
@@ -203,7 +206,10 @@ var FreeDraw = Shape.extend({
 	move: function (newX, newY) {
 		gcontext.clearRect(0, 0, ghost.width, ghost.height);
 		gcontext.drawImage(this.img, this.x, this.y, this.w, this.h, newX, newY, this.w, this.h);
-		//this.img.src = ghost.toDataURL("image/png");
+	},
+	contains: function(mx, my) {
+		return (this.x <= mx) && (this.x + this.w >= mx) &&
+			(this.y <= my) && (this.y + this.h >= my);
 	},
 });
 
